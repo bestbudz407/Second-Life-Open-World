@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0a1621"><title>Second Life • Graphics Lab 02</title>
+<style>
+:root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif;color:#ecf4f5}*{box-sizing:border-box}body{margin:0;background:#0d1823;overflow:hidden;touch-action:none}button,input,select{font:inherit}button{cursor:pointer;background:#213d4b;color:#e9faf7;border:1px solid #54727f;border-radius:11px;padding:10px 13px;font-weight:670;transition:background .15s}button:hover{background:#315d6c}button.primary{background:#bce7c5;color:#122a27;border-color:#d2f5d8}button.primary:hover{background:#e5ffe9}canvas#game{width:100vw;height:100dvh;display:block;touch-action:none}.hud{position:fixed;z-index:3;inset:17px 17px auto;display:flex;justify-content:space-between;gap:12px;pointer-events:none}.panel{background:#071b27db;border:1px solid #8fb8b645;box-shadow:0 12px 45px #0005;border-radius:16px;padding:13px 16px;backdrop-filter:blur(12px);pointer-events:auto}.brand{font-size:11px;text-transform:uppercase;letter-spacing:.18em;color:#a7d8ca;font-weight:830}.hud h1{margin:4px 0 6px;font-size:20px;line-height:1.16;font-weight:820;letter-spacing:-.03em}.mini{font-size:12px;color:#c2d1d8;line-height:1.45}.status{font-size:11px;color:#b9d8d7;margin-top:6px}.right{display:flex;align-items:flex-start;gap:9px;pointer-events:auto}.right button{font-size:12px}.statusDot{display:inline-block;width:7px;height:7px;background:#8df0ba;border-radius:100%;margin-right:5px}.bottom{position:fixed;bottom:17px;left:17px;z-index:4;max-width:min(500px,calc(100vw - 34px));pointer-events:none}.legend{background:#071b27c5;border:1px solid #ffffff25;border-radius:13px;padding:11px 14px;color:#dae7e7;font-size:12px;line-height:1.55;backdrop-filter:blur(10px)}.modalWrap{position:fixed;z-index:8;inset:0;background:#06121cbb;display:flex;align-items:center;justify-content:center;padding:18px}.modalWrap.hidden{display:none}.modal{width:min(590px,100%);max-height:min(85dvh,820px);overflow-y:auto;border:1px solid #8db7aa65;border-radius:21px;padding:28px;background:linear-gradient(150deg,#1b3541f6,#0c1822fa);box-shadow:0 22px 80px #000b}.modal h2{font-size:clamp(29px,5vw,46px);letter-spacing:-.04em;line-height:1.03;margin:11px 0 14px}.modal h3{font-size:21px;margin:0 0 15px}.modal p{color:#bcd0d4;line-height:1.6;font-size:14px}.kicker{font-size:11px;letter-spacing:.2em;color:#9fe3bb;text-transform:uppercase;font-weight:760}.buttons{display:flex;gap:9px;flex-wrap:wrap;margin:18px 0 2px}.fields{display:grid;gap:14px;margin:13px 0}.fields label{display:grid;gap:5px;font-size:13px;color:#ccdfdd}.fields select,.fields input:not([type=range]){background:#102936;border:1px solid #587886;color:#ecf5f5;border-radius:9px;padding:10px}.fields input[type=range]{width:100%;accent-color:#b6e7bd}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.note{color:#acc0c5;font-size:12px;line-height:1.6}#toast{position:fixed;top:103px;left:50%;transform:translateX(-50%);max-width:88vw;z-index:5;color:#ecfff4;background:#183742e8;border:1px solid #93cbb37a;padding:10px 16px;border-radius:12px;opacity:0;transition:opacity .35s;pointer-events:none;font-size:13px;text-align:center}#touch{display:none;position:fixed;z-index:5;left:21px;bottom:28px;width:118px;height:118px;border:2px solid #ffffff54;border-radius:50%;background:#15445b82;touch-action:none}#nub{position:absolute;left:39px;top:39px;width:40px;height:40px;border-radius:50%;background:#bcf4e6a6;border:2px solid #e0fff8}#jump{display:none;position:fixed;z-index:5;bottom:45px;right:22px;width:68px;height:68px;border-radius:50%;background:#1b718bcb}#statusQuality{font-weight:700;color:#b3e8b6}#error{display:none;position:fixed;inset:0;z-index:40;padding:35px;background:#102630;color:#e9f5ee;line-height:1.7}.option{display:flex;justify-content:space-between;align-items:center;gap:8px}.option span{font-size:12px;color:#c7dbd7}#debug{white-space:pre-wrap;word-break:break-word;font:11px/1.5 ui-monospace,monospace;color:#a6e6d7;background:#061822;border-radius:9px;padding:9px;margin:8px 0 0;display:none}@media(pointer:coarse){#touch,#jump{display:block}.bottom{display:none}.hud{inset:9px 9px auto}.hud h1{font-size:14px}.panel{padding:9px 11px;border-radius:12px}.status{font-size:10px}.right button{padding:9px 10px}.modal{padding:20px;max-height:88dvh}#toast{top:86px}}@media(max-width:680px){.right{gap:4px}.right #cameraMode{display:none}.two{grid-template-columns:1fr}.hud .mini{display:none}}@media(pointer:coarse) and (orientation:portrait){.hud{max-width:100vw}#touch{bottom:27px}#jump{bottom:39px}}
+</style></head><body>
+<canvas id="game" tabindex="0" aria-label="Interactive 3D graphics lab"></canvas>
+<div class="hud"><div class="panel"><div class="brand">Second Life / graphics research</div><h1>Oakridge <span style="color:#b6eac6">Graphics Lab</span> <span style="font-weight:440;opacity:.62">02</span></h1><div class="mini">A detailed family home, street and animated 3D character.</div><div class="status"><span class="statusDot"></span><span id="modelStatus">Preparing environment…</span></div><div class="status">Quality: <span id="statusQuality">Auto</span> · <span id="fps">— fps</span></div></div><div class="right"><button id="cameraMode">View: follow</button><button id="settingsOpen">⚙ Graphics / controls</button></div></div>
+<div id="toast"></div><div class="bottom"><div class="legend">WASD move · Mouse drag look · Space jump · Shift run · C camera · Xbox: left stick move + right stick look simultaneously, X jump, RT run · Swipe right side to look on phone</div></div><div id="touch"><div id="nub"></div></div><button id="jump">JUMP<br> X</button>
+<div class="modalWrap" id="intro"><div class="modal"><div class="kicker">Visual research · separate from your game</div><h2>Fixing the character and the world.</h2><p>This is a <strong>standalone graphics experiment</strong>, not an upgrade to your live v0.8.1 game. This lab corrects the sideways human model, disconnected roof, and washed-out lighting seen in Lab 01. Try an upright animated character with a properly joined house roof, then test both sticks and jump.</p><p><strong>Heads-up:</strong> the human model loads from a public GLB reference library. If the model download fails, a procedural fallback will appear. An internet connection is required, just like your current game.</p><div class="buttons"><button class="primary" id="start">Enter Graphics Lab →</button><button id="introSettings">Graphics options</button></div><p class="note">No purchases, installs or changes to your main game save. Desktop and mobile share the same website. The detailed model is a temporary animation reference, not your final realistic civilian character.</p></div></div>
+<div class="modalWrap hidden" id="settings"><div class="modal"><div class="kicker">Graphics lab · settings</div><h3>Quality and controls</h3><div class="fields"><label>Rendering quality<select id="quality"><option value="auto">Auto (recommended)</option><option value="eco">Eco / older phone</option><option value="balanced">Balanced</option><option value="cinematic">Cinematic / desktop</option></select></label><label>Time of day <span id="sunLabel">Late afternoon</span><input type="range" id="sun" min="0" max="100" value="64"></label><label>Reference character<select id="character"><option value="detailed">Animated human (Soldier reference · recommended)</option><option value="civilian">CesiumMan astronaut reference (alternate)</option></select></label><label>Character orientation<select id="orientation"><option value="auto">Auto-detect upright (recommended)</option><option value="original">Use original model orientation</option><option value="xplus">Rotate +90° around X</option><option value="xminus">Rotate −90° around X</option><option value="zplus">Rotate +90° around Z</option><option value="zminus">Rotate −90° around Z</option></select></label><label>Camera sensitivity <span id="senseLabel">2.3</span><input type="range" id="sense" min="0.7" max="5" step="0.1" value="2.3"></label><div class="two"><label><span>Invert movement horizontal</span><select id="invertX"><option value="normal">Normal</option><option value="invert">Inverted</option></select></label><label><span>Invert movement vertical</span><select id="invertY"><option value="normal">Normal</option><option value="invert">Inverted</option></select></label><label><span>Invert look horizontal</span><select id="lookX"><option value="normal">Normal</option><option value="invert">Inverted</option></select></label><label><span>Invert look vertical</span><select id="lookY"><option value="normal">Normal</option><option value="invert">Inverted</option></select></label></div><div class="option"><span>Controller input monitor</span><button id="toggleMonitor">Show input</button></div><pre id="debug"></pre></div><div class="buttons"><button class="primary" id="save">Return to lab</button><button id="reset">Reset graphics/controls</button></div><p class="note">The realistic-style imported character is a visual reference, not yet your customizable v0.8.1 avatar. If the model still faces the wrong direction, use Character orientation above. Licenses and source links are recorded in the README.</p></div></div>
+<div id="error" role="alert"></div>
+<script src="https://cdn.babylonjs.com/babylon.js"></script>
+<script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id), B=window.BABYLON;
+if(!B){$('error').style.display='block';$('error').textContent='The 3D engine could not load. Check your internet connection and reload this HTTPS page.';return}
+const canvas=$('game');let engine;
+try{engine=new B.Engine(canvas,true,{stencil:false,preserveDrawingBuffer:false},true)}catch(err){$('error').style.display='block';$('error').textContent='Your browser could not start WebGL: '+err.message;return}
+const mobile=matchMedia('(pointer:coarse)').matches, storeKey='secondlife-graphics-lab-02';
+const defaults={quality:'auto',sun:64,character:'detailed',orientation:'auto',sense:2.3,invertX:'normal',invertY:'normal',lookX:'normal',lookY:'normal',showMonitor:false};
+let settings={...defaults};try{settings={...settings,...JSON.parse(localStorage.getItem(storeKey)||'{}')}}catch(_){}
+const saved=()=>{try{localStorage.setItem(storeKey,JSON.stringify(settings))}catch(_){}};
+function qualityLevel(){return settings.quality==='auto'?(mobile?'eco':'balanced'):settings.quality}
+let quality=qualityLevel();function applyQuality(){quality=qualityLevel();const ratio=window.devicePixelRatio||1;engine.setHardwareScalingLevel(quality==='eco'?Math.max(1.75,ratio/1.1):quality==='balanced'?Math.max(1.15,ratio/1.5):Math.max(.9,ratio/2));$('statusQuality').textContent=quality;engine.resize();if(shadow){shadow.blurKernel=quality==='cinematic'?32:quality==='balanced'?20:10;shadow.getShadowMap()?.refreshRate&&(shadow.getShadowMap().refreshRate=B.RenderTargetTexture.REFRESHRATE_RENDER_ONEVERYFRAME)}}
+let shadow=null;applyQuality();
+const scene=new B.Scene(engine);scene.clearColor=new B.Color4(.80,.86,.88,1);scene.fogMode=B.Scene.FOGMODE_EXP2;scene.fogDensity=.0026;scene.fogColor=new B.Color3(.77,.84,.88);
+scene.imageProcessingConfiguration.toneMappingEnabled=true;scene.imageProcessingConfiguration.toneMappingType=B.ImageProcessingConfiguration.TONEMAPPING_ACES;scene.imageProcessingConfiguration.contrast=1.16;scene.imageProcessingConfiguration.exposure=.90;
+const camera=new B.FreeCamera('manual chase',new B.Vector3(5,4,17),scene);camera.minZ=.12;camera.maxZ=340;camera.fov=.93;camera.inputs.clear();camera.setTarget(new B.Vector3(-2,2,-5));
+let yaw=0.1,pitch=.13,radius=10,mode='follow',lookDelta={x:0,y:0};
+const hemi=new B.HemisphericLight('ambient sky',new B.Vector3(0,1,0),scene);hemi.intensity=.58;hemi.groundColor=new B.Color3(.30,.36,.32);
+const sun=new B.DirectionalLight('sun',new B.Vector3(-.8,-1,-.4),scene);sun.position.set(45,90,65);sun.intensity=1.55;
+shadow=new B.ShadowGenerator(mobile?1024:2048,sun);shadow.useBlurExponentialShadowMap=true;shadow.blurKernel=quality==='cinematic'?32:quality==='eco'?10:20;shadow.bias=.00018;shadow.normalBias=.012;
+function toColor(c){return B.Color3.FromHexString(c)}
+function pbr(n,albedo,metal=0,rough=.85){let m=new B.PBRMaterial(n,scene);m.albedoColor=toColor(albedo);m.metallic=metal;m.roughness=rough;return m}
+function dynamicTex(n,size,draw,tileX=1,tileY=1){const t=new B.DynamicTexture(n,{width:size,height:size},scene,false);draw(t.getContext(),size);t.uScale=tileX;t.vScale=tileY;t.update(false);return t}
+function seeded(seed){let s=seed>>>0;return ()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296}}
+function grain(ctx,size,seed,amount=15000){const r=seeded(seed);for(let i=0;i<amount;i++){const q=Math.floor(90+r()*140);ctx.fillStyle=`rgba(${q},${q},${q},${r()*.24})`;ctx.fillRect(r()*size,r()*size,1+r()*3,1+r()*3)}}
+function texPbr(name,color,draw,tx=1,ty=1,rough=.88){const m=pbr(name,color,0,rough);m.albedoTexture=dynamicTex(name+' texture',512,draw,tx,ty);return m}
+const siding=texPbr('weatherboard','#e9e8df',(c,s)=>{c.fillStyle='#e8e6da';c.fillRect(0,0,s,s);for(let y=0;y<s;y+=31){c.fillStyle='#bbc0b9';c.fillRect(0,y+27,s,3);c.fillStyle='#f3f2ec';c.fillRect(0,y,s,3)}grain(c,s,117,3500)},3.3,2.1);
+const brick=texPbr('weathered brick','#eee6db',(c,s)=>{c.fillStyle='#af9b89';c.fillRect(0,0,s,s);const r=seeded(84);for(let y=0;y<s;y+=34)for(let x=-72+(Math.floor(y/34)%2)*72;x<s;x+=144){let hue=120+Math.floor(r()*55);c.fillStyle=`rgb(${hue+33},${hue+13},${hue})`;c.fillRect(x+3,y+3,137,28);c.fillStyle='rgba(236,223,209,.2)';c.fillRect(x+3,y+4,137,2)}grain(c,s,517,4200)},2.4,1.5);
+const asphalt=texPbr('rough asphalt','#626262',(c,s)=>{c.fillStyle='#454649';c.fillRect(0,0,s,s);grain(c,s,290,15000);const r=seeded(39);for(let i=0;i<13;i++){c.strokeStyle='rgba(31,29,29,.22)';c.lineWidth=1+r()*2;c.beginPath();let x=r()*s,y=r()*s;c.moveTo(x,y);for(let k=0;k<8;k++){x+=(r()-.5)*33;y+=(r()-.5)*25;c.lineTo(x,y)}c.stroke()}},7,2,.97);
+const concrete=texPbr('poured concrete','#dddcd3',(c,s)=>{c.fillStyle='#bcbeb8';c.fillRect(0,0,s,s);grain(c,s,600,8000);c.strokeStyle='#8a969455';c.lineWidth=2;for(let j=0;j<3;j++){c.beginPath();c.moveTo(j*s/2,0);c.lineTo(j*s/2,s);c.stroke()}},6,1.5,.94);
+const lawn=texPbr('natural lawn','#b9c3aa',(c,s)=>{c.fillStyle='#67855a';c.fillRect(0,0,s,s);const r=seeded(434);for(let i=0;i<17000;i++){let g=65+Math.floor(r()*70);c.fillStyle=`rgba(${26+Math.floor(r()*30)},${g+45},${23+Math.floor(r()*35)},${.28+r()*.40})`;let x=r()*s,y=r()*s;c.fillRect(x,y,1+r()*2,3+r()*5)}},15,15,.99);
+const shingles=texPbr('weathered roof shingles','#8d9293',(c,s)=>{c.fillStyle='#62686b';c.fillRect(0,0,s,s);const r=seeded(78);for(let y=0;y<s;y+=26)for(let x=-40+(Math.floor(y/26)%2)*41;x<s;x+=82){let v=80+Math.floor(r()*55);c.fillStyle=`rgb(${v},${v+3},${v+4})`;c.fillRect(x+1,y+1,80,23);c.fillStyle='#373e4166';c.fillRect(x+1,y+22,80,3)}grain(c,s,99,2200)},3,3,.99);
+const bark=texPbr('tree bark','#b0a08b',(c,s)=>{c.fillStyle='#5d5548';c.fillRect(0,0,s,s);const r=seeded(998);for(let i=0;i<3100;i++){const v=70+Math.floor(r()*50);c.fillStyle=`rgba(${v},${v-8},${v-12},${.3+r()*.5})`;c.fillRect(r()*s,r()*s,1+r()*8,4+r()*50)}},1,2,.97);
+const wood=pbr('warm oak','#98775a',0,.76),trim=pbr('white trims','#f0ece3',0,.61),glass=pbr('window glazing','#7bafc0',.08,.07),dark=pbr('window frames','#343f42',.23,.42),doorMat=pbr('painted entry door','#2f524e',0,.57),stone=pbr('stone work','#aaa79d',0,.92),walkMat=concrete,curbMat=pbr('curb','#d0d0cb',0,.90),roadPaint=pbr('road markings','#eee9d8',0,.9),brickWalk=pbr('landscaping pavers','#a37c69',0,.9),leafA=pbr('oak foliage','#537747',0,1),leafB=pbr('leaf highlight','#759356',0,1),leafC=pbr('leaf shade','#425c36',0,1),carPaint=pbr('car body','#2a4250',.58,.26),tires=pbr('tires','#181c21',0,1),carLights=pbr('headlamps','#ffebcd',0,.20);
+const metal=pbr('brushed steel','#878f92',.75,.38),interiorShade=pbr('window curtain','#a4a398',0,.98);
+const terrain=[];function meshBox(n,w,h,d,x,y,z,m,cast=false,receive=false){const q=B.MeshBuilder.CreateBox(n,{width:w,height:h,depth:d},scene);q.position.set(x,y,z);q.material=m;if(cast)shadow.addShadowCaster(q);if(receive)q.receiveShadows=true;terrain.push(q);return q}
+function plane(n,w,h,x,y,z,m,angleX=Math.PI/2){const q=B.MeshBuilder.CreatePlane(n,{width:w,height:h},scene);q.position.set(x,y,z);q.rotation.x=angleX;q.material=m;q.receiveShadows=true;return q}
+function cyl(n,rad,h,x,y,z,m,sub=16){let q=B.MeshBuilder.CreateCylinder(n,{height:h,diameter:rad*2,tessellation:sub},scene);q.position.set(x,y,z);q.material=m;shadow.addShadowCaster(q);return q}
+function ball(n,r,x,y,z,m,seg=12){let q=B.MeshBuilder.CreateSphere(n,{diameter:r*2,segments:seg},scene);q.position.set(x,y,z);q.material=m;return q}
+// Ground: one walkable demo block, two neighboring houses, detailed feature home.
+meshBox('broad suburban terrain',180,.25,180,0,-.18,0,lawn,false,true);
+meshBox('two lane local road',180,.09,11,0,-.035,16,asphalt,false,true);
+for(const z of [8.95,23.05]){meshBox('continuous curb',180,.24,.24,0,.08,z,curbMat);meshBox('sidewalk',180,.10,2.3,0,.035,z+(z<16?-1.4:1.4),concrete,false,true)}
+for(let x=-85;x<90;x+=12){meshBox('painted centerline',5.2,.02,.095,x,.04,16,roadPaint)}
+for(let x=-85;x<90;x+=9){meshBox('driveway curb seam',.045,.01,2.1,x,.11,7.65,curbMat)}
+// House main footprint (-5, -7): two floors + pitched roof.
+const HOME_X=-5,HOME_Z=-6;
+function house(x,z,featured=true,tint='cream'){
+const w=featured?14.5:13,d=featured?10.5:10,wall=featured?siding:brick;
+meshBox('house foundations',w+.8,.48,d+.8,x,.22,z,brick,true,true);
+meshBox('house walls',w,6.5,d,x,3.7,z,wall,true,true);
+// Joined, measured pitched roof: the ridge, slopes and eaves share their exact endpoints.
+// Graphics Lab 01 rotated left/right panels the wrong way, making a floating V in screenshots.
+const eaveY=6.91,ridgeY=9.29,halfSpan=(w+1.1)/2;
+const rise=ridgeY-eaveY,run=halfSpan,pitch=Math.atan2(rise,run),panelLength=Math.hypot(run,rise)+.20;
+const roofFront=z+d/2+.67;
+for(const side of [-1,1]){
+ const section=meshBox('connected shingle roof slope',panelLength,.24,d+1.45,
+   x+side*halfSpan/2,(eaveY+ridgeY)/2,z,shingles,true);
+ section.rotation.z=-side*pitch;
+}
+meshBox('connected ridge trim',.35,.28,d+1.60,x,ridgeY,z,shingles,true);
+for(const side of [-1,1]){
+ meshBox('eave fascia',.19,.34,d+1.46,x+side*halfSpan,eaveY-.12,z,trim,true);
+}
+// Triangular gable below pitched roof, with no floating cap or roof intersections.
+for(const end of [-1,1]){
+ const gable=new B.Mesh('house gable triangle',scene);
+ const vertices=[x-halfSpan,eaveY,z+end*(d/2+.045),x+halfSpan,eaveY,z+end*(d/2+.045),x,ridgeY,z+end*(d/2+.045)];
+ const vd=new B.VertexData();vd.positions=vertices;vd.indices=end>0?[0,1,2]:[2,1,0];vd.normals=[];
+ B.VertexData.ComputeNormals(vd.positions,vd.indices,vd.normals);vd.applyToMesh(gable);
+ gable.material=wall;gable.isPickable=false;shadow.addShadowCaster(gable);
+}
+
+// Front door and vestibule
+const front=z+d/2+.085;
+meshBox('ornamental porch slab',featured?6.5:5.4,.24,3.2,x,.31,front+1.36,stone,true);
+meshBox('door inset surround',2.7,3.65,.18,x,2.0,front+.14,trim,true);
+meshBox('solid front door',2.12,3.28,.21,x,1.91,front+.26,doorMat,true);
+meshBox('door handle',.1,.3,.16,x+.76,1.92,front+.40,metal);
+meshBox('door glass pane',.85,1.12,.10,x,2.55,front+.4,glass);
+meshBox('over-door transom',2.15,.26,.12,x,3.69,front+.35,glass);
+for(const side of [-1,1]){
+ for(const h of [2.05,4.89]){
+  let wx=x+side*(featured?4.6:4.2);
+  meshBox('casement outer window frame',2.8,2.05,.25,wx,h,front+.17,trim,true);
+  meshBox('dark window sash',2.42,1.72,.28,wx,h,front+.34,dark);
+  meshBox('reflective glass window',2.2,1.52,.15,wx,h,front+.47,glass);
+  meshBox('window mullion',.09,1.52,.17,wx,h,front+.57,trim);
+  meshBox('window crossbar',2.2,.07,.17,wx,h,front+.57,trim);
+  meshBox('stone window sill',3.04,.13,.46,wx,h-1.08,front+.48,stone);
+  meshBox('louvered shutter',.38,1.96,.30,wx+side*1.62,h,front+.32,doorMat,true);
+ }
+ // lanterns
+ const postX=x+side*1.68;
+ meshBox('porch lantern bracket',.18,.2,.5,postX,3.05,front+.6,dark);
+ meshBox('warm porch lamp',.25,.45,.28,postX,2.79,front+.7,carLights);
+}
+if(featured){
+ for(let i=-2;i<=2;i++){let pX=x+i*1.3;if(Math.abs(i)<1)continue;meshBox('porch post',.18,3.2,.18,pX,1.95,front+2.75,trim,true)}
+ meshBox('porch beam',6.3,.22,.25,x,3.48,front+2.74,trim,true);
+ for(let i=0;i<3;i++)meshBox('front porch step',4.9-i*.3,.12,.56,x,.19-i*.055,front+3.2+i*.48,stone);
+ // house foundation and walkway
+ meshBox('front stone walkway',2.6,.09,7.5,x,.075,front+7.15,concrete,false,true);
+ // garden planting beds
+ for(const side of [-1,1])for(let t=0;t<5;t++){
+  const px=x+side*(2.5+t*.9),pz=front+3.65+Math.sin(t)*.4;
+  ball('flower shrub',.32,px,.41,pz,t%2?leafA:leafB,10);
+  ball('colorful flowers',.12,px,.77,pz, t%2?pbr('red blooms','#a75155'):pbr('yellow blooms','#dbaf65'),8);
+ }
+}
+return {x,z,w,d,front}
+}
+const featuredHouse=house(HOME_X,HOME_Z,true);
+house(-31,-13,false);house(23,-17,false);
+// Front driveway and low stone wall.
+meshBox('driveway parking entrance',4.4,.09,18,6.7,.07,1.6,concrete,false,true);
+meshBox('driveway edge bricks',.2,.14,18,4.45,.1,1.6,brickWalk);
+meshBox('driveway edge bricks',.2,.14,18,8.95,.1,1.6,brickWalk);
+for(let side of [-1,1]){
+ const xx=HOME_X+side*8.4;
+ for(let zz=-11;zz<8;zz+=4.7)meshBox('fence stone pillar',.36,1.4,.36,xx,.7,zz,stone,true);
+ for(let zz=-11;zz<7.2;zz+=1.6)meshBox('cedar fence plank',.1,1.03,1.50,xx,.68,zz+.7,wood,true);
+}
+// Car with multiple body layers, windshield, wheel arches, rims and clear glass.
+function car(x,z,rot=0){const root=new B.TransformNode('parked sedan',scene);root.position.set(x,.23,z);root.rotation.y=rot;
+function part(n,w,h,d,px,py,pz,m){let q=meshBox(n,w,h,d,0,0,0,m,true);q.parent=root;q.position.set(px,py,pz);return q}
+part('lower chassis',1.82,.52,4.25,0,.55,0,carPaint);part('rounded hood',1.81,.21,1.30,0,.94,1.32,carPaint);
+let cabin=part('upper cabin',1.54,.81,2.15,0,1.19,-.34,carPaint);cabin.scaling.x=.97;
+for(let side of [-1,1]){part('side windows front',.045,.43,.80,side*.78,1.39,.19,glass);part('side windows rear',.045,.43,.80,side*.78,1.39,-.93,glass)}
+part('windshield',1.39,.50,.035,0,1.43,.62,glass);part('rear windshield',1.32,.49,.035,0,1.42,-1.43,glass);
+for(let side of [-1,1])for(let zz of [-1.32,1.28]){
+ let wheel=B.MeshBuilder.CreateCylinder('radial tire',{diameter:.83,height:.29,tessellation:24},scene);wheel.parent=root;wheel.position.set(side*.94,.42,zz);wheel.rotation.z=Math.PI/2;wheel.material=tires;
+ let rim=B.MeshBuilder.CreateCylinder('alloy wheel',{diameter:.49,height:.31,tessellation:16},scene);rim.parent=root;rim.position.set(side*1.01,.42,zz);rim.rotation.z=Math.PI/2;rim.material=metal;
+}
+for(let side of [-1,1]){part('tail light',.43,.17,.07,side*.59,.69,-2.16,pbr('brake light','#d9544d',0,.25));part('headlight',.42,.17,.09,side*.62,.75,2.17,carLights);part('side mirror',.21,.18,.29,side*.91,1.28,.55,carPaint)}
+return root}
+car(6.6,1.6,0);
+// Trees: branching trunks with hundreds of non-spherical leafy clusters rather than green balls.
+function tree(x,z,height=7.6,seed=7){const rand=seeded(seed),root=new B.TransformNode('oak tree',scene);root.position.set(x,0,z);
+function member(n,h,r1,r2,px,py,pz,m,rotation){let q=B.MeshBuilder.CreateCylinder(n,{height:h,diameterTop:r1*2,diameterBottom:r2*2,tessellation:10},scene);q.parent=root;q.position.set(px,py,pz);if(rotation)q.rotation.copyFrom(rotation);q.material=m;shadow.addShadowCaster(q);return q}
+member('textured trunk',height*.6,.18,.37,0,height*.30,0,bark);
+const leaves=[leafA,leafB,leafC];
+for(let b=0;b<8;b++){const a=b*Math.PI*2/8+rand()*.17,dist=1.45+rand()*.95;
+ const py=height*.54+rand()*1.6,cx=Math.cos(a)*dist,cz=Math.sin(a)*dist;
+ const branch=member('natural branch',2.65,.08,.17,cx*.5,py-.55,cz*.5,bark,new B.Vector3(Math.sin(a)*.5,0,-Math.cos(a)*.53));
+ for(let k=0;k<10;k++){
+  const px=cx+(rand()-.5)*2.7,py2=py+(rand()-.5)*2.1,pz=cz+(rand()-.5)*2.6;
+  let l=B.MeshBuilder.CreateSphere('irregular leaf cluster',{diameter:1,segments:6},scene);l.parent=root;l.position.set(px,py2,pz);l.scaling.set(.36+rand()*.5,.24+rand()*.4,.38+rand()*.49);l.rotation.set(rand()*1.8,rand()*6,rand()*1.9);l.material=leaves[Math.floor(rand()*leaves.length)];
+ }
+}return root}
+for(const [x,z,h,k] of [[-20,-1,8,7],[14,-7,9,21],[-37,-4,6,31],[28,-1,7,54]])tree(x,z,h,k);
+// Clumps of grass near path and driveway: instanced for low GPU overhead.
+const bladeMat=pbr('sunlit groundgrass','#91a36f',0,1);bladeMat.backFaceCulling=false;
+const bladeBase=B.MeshBuilder.CreatePlane('cluster seed',{size:1.1},scene);bladeBase.material=bladeMat;bladeBase.isVisible=false;
+const rng=seeded(456);for(let i=0;i<270;i++){
+ const x=-26+rng()*51,z=-18+rng()*27;
+ if(Math.abs(x-HOME_X)<7.7&&z>-11&&z<-1)continue;
+ if(z>7||z< -16)continue;
+ if(x>4.4&&x<9.0&&z>-8)continue;
+ let grass1=bladeBase.createInstance('grass tussock');grass1.position.set(x,.27,z);grass1.scaling.set(.35+rng()*.4,.25+rng()*.45,1);grass1.rotation.y=rng()*6.28;
+}
+function streetLight(x,z){cyl('lamp post',.075,6,x,3,z,metal,12);const arm=meshBox('lamp arm',1.1,.12,.14,x+.50,5.75,z,metal);ball('lamp diffuser',.23,x+1.05,5.63,z,carLights)}
+streetLight(-18,10.2);streetLight(19,10.2);
+// Atmospheric dome + translucent high clouds.
+const sky=new B.DynamicTexture('sky gradient',{width:8,height:512},scene,false);const sc=sky.getContext();let gradient=sc.createLinearGradient(0,0,0,512);gradient.addColorStop(0,'#395a8a');gradient.addColorStop(.55,'#92b6d2');gradient.addColorStop(1,'#f5d5b1');sc.fillStyle=gradient;sc.fillRect(0,0,8,512);sky.update(false);
+const skyMat=new B.StandardMaterial('sky atmosphere',scene);skyMat.diffuseTexture=sky;skyMat.emissiveTexture=sky;skyMat.disableLighting=true;skyMat.backFaceCulling=false;
+const dome=B.MeshBuilder.CreateSphere('skybox',{diameter:290,segments:20},scene);dome.material=skyMat;dome.infiniteDistance=true;dome.isPickable=false;dome.applyFog=false;
+// Polygonal architecture blocks, for a sense of a surrounding neighborhood.
+for(let i=0;i<12;i++){const x=-95+i*17,z=-62+(i%3)*5;const m=i%2?brick:siding;
+meshBox('distant block',12,7+(i%3)*2,10,x,4,z,m,true);meshBox('distant roof',13,.45,11,x,8+(i%3),z,shingles)}
+// Human reference loader. Preserve the complete GLB hierarchy (including TransformNodes and
+// skeleton bones): the 01 lab detached skinned meshes from their rig when re-parenting them.
+const actor=new B.TransformNode('player locomotion root',scene);actor.position.set(-2,0,6.15);
+let actorVisual=null,animationGroups=[],modelKey='',loadingSequence=0,animState='';
+let actorHeight=1.83,referenceMeshes=[],referencePivot=null,referenceFit=null,measuredOrientation='';
+function fallbackPerson(){const root=new B.TransformNode('upright fallback character',scene);root.parent=actor;
+const skinMat=pbr('placeholder skin','#c99470',0,.91),outfit=pbr('placeholder outfit','#456b72',0,.82),jeans=pbr('placeholder pants','#253b4a',0,.89),fallbackHair=pbr('placeholder hair','#241f1b',0,.98);
+function ell(n,x,y,z,sx,sy,sz,m){let o=B.MeshBuilder.CreateSphere(n,{diameter:1,segments:24},scene);o.parent=root;o.position.set(x,y,z);o.scaling.set(sx,sy,sz);o.material=m;return o}
+ell('anatomical torso',0,1.16,0,.43,.68,.25,outfit);ell('pelvis',0,.93,0,.36,.22,.25,jeans);ell('head',0,1.7,0,.28,.34,.26,skinMat);ell('hair',0,1.87,.04,.3,.14,.26,fallbackHair);
+for(let side of [-1,1]){ell('upper arm',side*.35,1.20,0,.16,.52,.15,outfit);ell('hand',side*.40,.91,0,.10,.19,.09,skinMat);ell('trouser leg',side*.15,.48,0,.15,.81,.15,jeans);ell('shoe',side*.15,.08,-.09,.17,.11,.28,tires)}
+return root}
+function getModelURL(key){return key==='civilian'?'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/CesiumMan/glTF-Binary/CesiumMan.glb':'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/models/gltf/Soldier.glb'}
+function meshBounds(meshes){
+ const min=new B.Vector3(Infinity,Infinity,Infinity),max=new B.Vector3(-Infinity,-Infinity,-Infinity);
+ let n=0;
+ for(const m of meshes){if(!(m instanceof B.AbstractMesh)||!m.getTotalVertices?.())continue;
+  m.computeWorldMatrix(true);
+  const bb=m.getBoundingInfo().boundingBox;
+  min.minimizeInPlace(bb.minimumWorld);max.maximizeInPlace(bb.maximumWorld);n++;
+ }
+ return n&&Number.isFinite(min.y)?{min,max,size:max.subtract(min)}:null;
+}
+function poseAngle(mode){
+ if(mode==='xplus')return [Math.PI/2,0,0];
+ if(mode==='xminus')return [-Math.PI/2,0,0];
+ if(mode==='zplus')return [0,0,Math.PI/2];
+ if(mode==='zminus')return [0,0,-Math.PI/2];
+ return [0,0,0];
+}
+function uprightAvatar(){
+ if(!referencePivot||!referenceFit||!referenceMeshes.length)return;
+ referenceFit.position.set(0,0,0);referenceFit.scaling.setAll(1);
+ referencePivot.rotationQuaternion=null;referencePivot.rotation.set(0,0,0);
+ referencePivot.computeWorldMatrix(true);
+ let raw=meshBounds(referenceMeshes);if(!raw)return;
+ let use=settings.orientation;
+ if(use==='auto'){
+  const dim=raw.size;
+  use=(dim.x>dim.y*1.24&&dim.x>dim.z)?'zplus':(dim.z>dim.y*1.24&&dim.z>dim.x)?'xminus':'original';
+ }
+ const r=poseAngle(use);referencePivot.rotation.set(...r);
+ let b=meshBounds(referenceMeshes);if(!b)return;
+ // Skeleton head/foot names can help reject an upside-down imported pose.
+ const headBone=scene.transformNodes.find(t=>t.name&&/head/i.test(t.name)&&t.isDescendantOf?.(referencePivot));
+ const feetBone=scene.transformNodes.find(t=>t.name&&/(leftfoot|rightfoot|foot)/i.test(t.name)&&t.isDescendantOf?.(referencePivot));
+ if(settings.orientation==='auto'&&headBone&&feetBone){
+   headBone.computeWorldMatrix(true);feetBone.computeWorldMatrix(true);
+   if(headBone.getAbsolutePosition().y<feetBone.getAbsolutePosition().y-.2){
+    referencePivot.rotation.x*=-1;referencePivot.rotation.z*=-1;
+    b=meshBounds(referenceMeshes)||b;use+=' (upright flipped)';
+   }
+ }
+ const height=Math.max(.15,b.size.y),scale=B.Scalar.Clamp(actorHeight/height,.001,100);
+ referenceFit.scaling.setAll(scale);
+ referenceFit.position.set(-((b.min.x+b.max.x)/2-actor.position.x)*scale,
+   -(b.min.y-actor.position.y)*scale,
+   -((b.min.z+b.max.z)/2-actor.position.z)*scale);
+ measuredOrientation=use;
+ $('modelStatus').textContent=(modelKey==='detailed'?'Animated human':'CesiumMan astronaut')+' · upright: '+use;
+}
+async function loadCharacter(key){
+ const ticket=++loadingSequence,prev=actorVisual,oldGroups=animationGroups;
+ animationGroups=[];animState='';modelKey=key;referenceMeshes=[];referencePivot=null;referenceFit=null;
+ $('modelStatus').textContent='Loading '+(key==='detailed'?'animated human':'astronaut')+' model…';
+ try{
+  const url=getModelURL(key),cut=url.lastIndexOf('/')+1;
+  const result=await B.SceneLoader.ImportMeshAsync('',url.slice(0,cut),url.slice(cut),scene,undefined,'.glb');
+  if(ticket!==loadingSequence){result.meshes.forEach(m=>m.dispose());return}
+  for(const group of result.animationGroups||[])group.stop();
+  const fit=new B.TransformNode('character scale and ground alignment',scene);fit.parent=actor;
+  const pivot=new B.TransformNode('character upright orientation',scene);pivot.parent=fit;
+  // Critical: include BOTH mesh and transform nodes so no skinned child is orphaned.
+  const importedNodes=[...new Set([...(result.meshes||[]),...(result.transformNodes||[])])];
+  const nodeSet=new Set(importedNodes);
+  const rootNodes=importedNodes.filter(n=>n&&(!n.parent||!nodeSet.has(n.parent)));
+  rootNodes.forEach(n=>n.parent=pivot);
+  for(const m of result.meshes){m.isPickable=false;if(m instanceof B.AbstractMesh){m.receiveShadows=true;shadow.addShadowCaster(m)}}
+  actorVisual=fit;referenceFit=fit;referencePivot=pivot;referenceMeshes=result.meshes;
+  animationGroups=result.animationGroups||[];
+  uprightAvatar();
+  if(prev)prev.dispose(false,true);
+  oldGroups.forEach(g=>{try{g.stop();g.dispose()}catch(_){}});
+  for(const g of animationGroups){g.start(true,1);g.setWeightForAllAnimatables(0)}
+  animState='';setAnimation('idle');
+  notify('Upright model loaded with its original skeleton and animations.');
+ }catch(e){
+  if(ticket!==loadingSequence)return;
+  console.warn('Character model loading failed',e);
+  const root=fallbackPerson();if(prev)prev.dispose(false,true);
+  oldGroups.forEach(g=>{try{g.stop();g.dispose()}catch(_){}});
+  actorVisual=root;referencePivot=null;referenceFit=null;referenceMeshes=[];animationGroups=[];
+  $('modelStatus').textContent='Procedural character fallback · model download unavailable';
+  notify('Model download failed; showing the upright fallback.');
+ }
+}
+function setAnimation(s){if(!animationGroups.length||animState===s)return;animState=s;const keyword=s==='run'?'run':s==='walk'?'walk':'idle';let match=animationGroups.find(a=>a.name.toLowerCase().includes(keyword));if(!match)match=animationGroups[0];for(const a of animationGroups)a.setWeightForAllAnimatables(a===match?1:0)}
+function notify(msg){const el=$('toast');el.textContent=msg;el.style.opacity=1;clearTimeout(notify.timer);notify.timer=setTimeout(()=>el.style.opacity=0,3300)}
+function applySun(){const t=settings.sun/100,ang=.12+t*Math.PI*.78;sun.direction.set(-Math.cos(ang)*.5,-Math.max(.24,Math.sin(ang)), -.45);sun.intensity=.9+1.25*Math.sin(ang);sun.diffuse=new B.Color3(1, .76+Math.sin(ang)*.18,.69+Math.sin(ang)*.24);hemi.intensity=.38+Math.sin(ang)*.30;scene.imageProcessingConfiguration.exposure=.76+Math.sin(ang)*.17;$('sunLabel').textContent=t<.3?'Early morning':t<.70?'Late afternoon':'Golden hour'}
+function syncControls(){for(const name of ['quality','character','orientation','invertX','invertY','lookX','lookY'])$(name).value=settings[name];$('sun').value=settings.sun;$('sense').value=settings.sense;$('senseLabel').textContent=Number(settings.sense).toFixed(1);$('toggleMonitor').textContent=settings.showMonitor?'Hide input':'Show input';$('debug').style.display=settings.showMonitor?'block':'none';applySun()}
+const runAllowed=()=> $('intro').classList.contains('hidden')&&$('settings').classList.contains('hidden');
+function hideIntro(){$('intro').classList.add('hidden');canvas.focus({preventScroll:true})}
+function openSettings(){$('settings').classList.remove('hidden');syncControls()}
+function closeSettings(){$('settings').classList.add('hidden');canvas.focus({preventScroll:true});saved()}
+$('start').onclick=hideIntro;$('introSettings').onclick=()=>{hideIntro();openSettings()};$('settingsOpen').onclick=openSettings;$('save').onclick=closeSettings;
+$('reset').onclick=()=>{settings={...defaults};syncControls();applyQuality();loadCharacter(settings.character);saved();notify('Settings restored')};
+$('quality').onchange=e=>{settings.quality=e.target.value;applyQuality();saved()};$('character').onchange=e=>{settings.character=e.target.value;loadCharacter(settings.character);saved()};$('orientation').onchange=e=>{settings.orientation=e.target.value;uprightAvatar();saved()};$('sun').oninput=e=>{settings.sun=Number(e.target.value);applySun();saved()};$('sense').oninput=e=>{settings.sense=Number(e.target.value);$('senseLabel').textContent=Number(settings.sense).toFixed(1);saved()};
+for(const id of ['invertX','invertY','lookX','lookY'])$(id).onchange=e=>{settings[id]=e.target.value;saved()};
+$('toggleMonitor').onclick=()=>{settings.showMonitor=!settings.showMonitor;syncControls();saved()};
+function cycleCamera(){mode=mode==='follow'?'orbit':mode==='orbit'?'detail':'follow';$('cameraMode').textContent='View: '+mode;notify(mode==='follow'?'Third-person follow camera':mode==='orbit'?'Free orbit around your character':'Static home showcase view')}
+$('cameraMode').onclick=cycleCamera;
+const keys={},touch={x:0,y:0};let drag=false,lastX=0,lastY=0,joyID=null,lookID=null;
+function textFocused(e){const t=e.target;return t instanceof Element&&!!t.closest('input,select,textarea,[contenteditable]')}
+addEventListener('keydown',e=>{if(textFocused(e))return;keys[e.key.toLowerCase()]=true;if([' ','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key))e.preventDefault();if(e.code==='Space'&&!e.repeat)jump();if(e.key.toLowerCase()==='c'&&!e.repeat)cycleCamera();if(e.key==='Escape'&&!e.repeat){if(!$('settings').classList.contains('hidden'))closeSettings();else openSettings()}});
+addEventListener('keyup',e=>{keys[e.key.toLowerCase()]=false});addEventListener('blur',()=>{for(const k of Object.keys(keys))keys[k]=false;touch.x=touch.y=0;drag=false});
+const stick=$('touch'),nub=$('nub');function moveTouch(e){const r=stick.getBoundingClientRect(),dx=e.clientX-r.left-r.width/2,dy=e.clientY-r.top-r.height/2;touch.x=Math.max(-1,Math.min(1,dx/50));touch.y=Math.max(-1,Math.min(1,dy/50));nub.style.transform=`translate(${touch.x*33}px,${touch.y*33}px)`}
+stick.addEventListener('pointerdown',e=>{joyID=e.pointerId;stick.setPointerCapture(joyID);moveTouch(e)});stick.addEventListener('pointermove',e=>{if(joyID===e.pointerId)moveTouch(e)});for(const event of ['pointerup','pointercancel'])stick.addEventListener(event,()=>{joyID=null;touch.x=touch.y=0;nub.style.transform='translate(0px,0px)'})
+canvas.addEventListener('pointerdown',e=>{if(e.button&&e.pointerType==='mouse')return;drag=true;lastX=e.clientX;lastY=e.clientY;canvas.setPointerCapture(e.pointerId)});canvas.addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-lastX,dy=e.clientY-lastY;lastX=e.clientX;lastY=e.clientY;lookDelta.x+=dx*.007;lookDelta.y+=dy*.006});for(const event of ['pointerup','pointercancel','lostpointercapture'])canvas.addEventListener(event,()=>drag=false);
+canvas.addEventListener('wheel',e=>{e.preventDefault();radius=Math.max(3.8,Math.min(14,radius+e.deltaY*.009))},{passive:false});
+$('jump').onclick=jump;let vy=0,grounded=true;function jump(){if(!runAllowed()||!grounded)return;grounded=false;vy=7.1;notify('Jump')}
+function axis(gp,i){const v=Number(gp?.axes?.[i]||0);return Math.abs(v)>.16?v:0}
+let lastGameButtons=[],padInfo='No controller detected';let input={moveX:0,moveY:0,lookX:0,lookY:0,run:false};
+function pollPad(){let gp;try{gp=Array.from(navigator.getGamepads?.()||[]).find(p=>p&&p.connected!==false)}catch(_){};
+if(!gp){lastGameButtons=[];input={moveX:0,moveY:0,lookX:0,lookY:0,run:false};padInfo='Not connected';return}
+const flip=id=>settings[id]==='invert'?-1:1;
+input={moveX:axis(gp,0)*flip('invertX'),moveY:axis(gp,1)*flip('invertY'),lookX:axis(gp,2)*flip('lookX'),lookY:axis(gp,3)*flip('lookY'),run:!!gp.buttons?.[7]?.pressed};
+const pressed=gp.buttons?.map(b=>!!b.pressed)||[];if(pressed[2]&&!lastGameButtons[2])jump();if(pressed[9]&&!lastGameButtons[9])openSettings();lastGameButtons=pressed;
+padInfo=gp.id.slice(0,56)}
+const hardObstacles=[{x:HOME_X,z:HOME_Z,w:15.5,d:11.4},{x:-31,z:-13,w:13.9,d:10.9},{x:23,z:-17,w:13.9,d:10.9},{x:6.7,z:1.6,w:2.2,d:4.7}];
+for(const [x,z] of [[-20,-1],[14,-7],[-37,-4],[28,-1]])hardObstacles.push({x,z,r:.48});
+function collides(x,z){if(x<-75||x>75||z<-40||z>37)return true;
+for(const q of hardObstacles){if('r'in q){if(Math.hypot(x-q.x,z-q.z)<q.r+.32)return true}else{const dx=Math.max(0,Math.abs(x-q.x)-q.w/2),dz=Math.max(0,Math.abs(z-q.z)-q.d/2);if(dx*dx+dz*dz<.38**2)return true}}return false}
+function safeMove(x,z){const dx=x-actor.position.x,dz=z-actor.position.z,n=Math.max(1,Math.ceil(Math.hypot(dx,dz)/.18));for(let i=0;i<n;i++){const nextX=actor.position.x+dx/n,nextZ=actor.position.z+dz/n;if(!collides(nextX,actor.position.z))actor.position.x=nextX;if(!collides(actor.position.x,nextZ))actor.position.z=nextZ}}
+let frame=0,seconds=0,monitorSeconds=0,lastFPS=60;
+applySun();syncControls();loadCharacter(settings.character);
+engine.runRenderLoop(()=>{const dt=Math.min(.05,engine.getDeltaTime()/1000);pollPad();const canPlay=runAllowed();
+if(canPlay){yaw+=input.lookX*dt*settings.sense+lookDelta.x;pitch+=input.lookY*dt*settings.sense*.58+lookDelta.y;pitch=Math.max(-.15,Math.min(.85,pitch));}
+lookDelta.x=lookDelta.y=0;
+const ix=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0)+touch.x+input.moveX;
+const iy=(keys.w||keys.arrowup?1:0)-(keys.s||keys.arrowdown?1:0)-touch.y-input.moveY;
+let speed=Math.hypot(ix,iy),state='idle';
+if(canPlay&&speed>.1){const nx=ix/Math.max(1,speed),ny=iy/Math.max(1,speed);const forwardX=Math.sin(yaw),forwardZ=-Math.cos(yaw),rightX=Math.cos(yaw),rightZ=Math.sin(yaw);
+const rx=forwardX*ny+rightX*nx,rz=forwardZ*ny+rightZ*nx;const running=!!(keys.shift||input.run),dist=(running?6.6:3.65)*dt;safeMove(actor.position.x+rx*dist,actor.position.z+rz*dist);
+const targetRotation=Math.atan2(rx,rz);let turn=((targetRotation-actor.rotation.y+Math.PI*3)%(Math.PI*2))-Math.PI;actor.rotation.y+=turn*Math.min(1,dt*12);state=running?'run':'walk'}
+if(canPlay&&!grounded){vy-=19.5*dt;actor.position.y+=vy*dt;if(actor.position.y<=0){actor.position.y=0;vy=0;grounded=true}}
+setAnimation(state);
+const t=new B.Vector3(actor.position.x,1.36+actor.position.y,actor.position.z);
+let desired;
+if(mode==='detail')desired=new B.Vector3(15,7,18);
+else if(mode==='orbit')desired=new B.Vector3(t.x+Math.sin(yaw)*radius,t.y+2.2+pitch*4,t.z+Math.cos(yaw)*radius);
+else{const dir=new B.Vector3(Math.sin(yaw),0,-Math.cos(yaw));const elev=Math.max(.1,Math.min(.72,.26+pitch));desired=new B.Vector3(t.x-dir.x*radius*Math.cos(elev),t.y+radius*Math.sin(elev),t.z-dir.z*radius*Math.cos(elev));}
+camera.position=B.Vector3.Lerp(camera.position,desired,Math.min(1,dt*8));camera.setTarget(mode==='detail'?new B.Vector3(HOME_X,3,-5):t);
+if(settings.showMonitor&&(frame++%9===0)){$('debug').textContent=`Gamepad: ${padInfo}\nMOVE L ${input.moveX.toFixed(2)}, ${input.moveY.toFixed(2)}\nLOOK R ${input.lookX.toFixed(2)}, ${input.lookY.toFixed(2)}\nMoving + looking together: ${Math.abs(input.moveX)+Math.abs(input.moveY)>.18 && Math.abs(input.lookX)+Math.abs(input.lookY)>.18?'YES':'—'}`}
+seconds+=dt;if(seconds>.6){lastFPS=Math.round(engine.getFps());$('fps').textContent=lastFPS+' fps';seconds=0}scene.render();});
+addEventListener('resize',()=>engine.resize());window.graphicsLabDebug={getStatus:()=>({model:modelKey,orientation:measuredOrientation,meshes:scene.meshes.length,characterLoaded:animationGroups.length>0,quality,position:actor.position.asArray(),fps:Math.round(engine.getFps()),camera:camera.position.asArray()}),getInput:()=>({...input})};
+})();
+</script></body></html>
