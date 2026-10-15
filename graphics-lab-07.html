@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0a1621"><title>Second Life • Graphics Lab 07</title>
+<style>
+:root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif;color:#ecf4f5}*{box-sizing:border-box}body{margin:0;background:#0d1823;overflow:hidden;touch-action:none}button,input,select{font:inherit}button{cursor:pointer;background:#213d4b;color:#e9faf7;border:1px solid #54727f;border-radius:11px;padding:10px 13px;font-weight:670;transition:background .15s}button:hover{background:#315d6c}button.primary{background:#bce7c5;color:#122a27;border-color:#d2f5d8}button.primary:hover{background:#e5ffe9}canvas#game{width:100vw;height:100dvh;display:block;touch-action:none}.hud{position:fixed;z-index:3;inset:17px 17px auto;display:flex;justify-content:space-between;gap:12px;pointer-events:none}.panel{background:#071b27db;border:1px solid #8fb8b645;box-shadow:0 12px 45px #0005;border-radius:16px;padding:13px 16px;backdrop-filter:blur(12px);pointer-events:auto}.brand{font-size:11px;text-transform:uppercase;letter-spacing:.18em;color:#a7d8ca;font-weight:830}.hud h1{margin:4px 0 6px;font-size:20px;line-height:1.16;font-weight:820;letter-spacing:-.03em}.mini{font-size:12px;color:#c2d1d8;line-height:1.45}.status{font-size:11px;color:#b9d8d7;margin-top:6px}.right{display:flex;align-items:flex-start;gap:9px;pointer-events:auto}.right button{font-size:12px}.statusDot{display:inline-block;width:7px;height:7px;background:#8df0ba;border-radius:100%;margin-right:5px}.bottom{position:fixed;bottom:17px;left:17px;z-index:4;max-width:min(500px,calc(100vw - 34px));pointer-events:none}.legend{background:#071b27c5;border:1px solid #ffffff25;border-radius:13px;padding:11px 14px;color:#dae7e7;font-size:12px;line-height:1.55;backdrop-filter:blur(10px)}.modalWrap{position:fixed;z-index:8;inset:0;background:#06121cbb;display:flex;align-items:center;justify-content:center;padding:18px}.modalWrap.hidden{display:none}.modal{width:min(590px,100%);max-height:min(85dvh,820px);overflow-y:auto;border:1px solid #8db7aa65;border-radius:21px;padding:28px;background:linear-gradient(150deg,#1b3541f6,#0c1822fa);box-shadow:0 22px 80px #000b}.modal h2{font-size:clamp(29px,5vw,46px);letter-spacing:-.04em;line-height:1.03;margin:11px 0 14px}.modal h3{font-size:21px;margin:0 0 15px}.modal p{color:#bcd0d4;line-height:1.6;font-size:14px}.kicker{font-size:11px;letter-spacing:.2em;color:#9fe3bb;text-transform:uppercase;font-weight:760}.buttons{display:flex;gap:9px;flex-wrap:wrap;margin:18px 0 2px}.fields{display:grid;gap:14px;margin:13px 0}.fields label{display:grid;gap:5px;font-size:13px;color:#ccdfdd}.fields select,.fields input:not([type=range]){background:#102936;border:1px solid #587886;color:#ecf5f5;border-radius:9px;padding:10px}.fields input[type=range]{width:100%;accent-color:#b6e7bd}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.note{color:#acc0c5;font-size:12px;line-height:1.6}#toast{position:fixed;top:103px;left:50%;transform:translateX(-50%);max-width:88vw;z-index:5;color:#ecfff4;background:#183742e8;border:1px solid #93cbb37a;padding:10px 16px;border-radius:12px;opacity:0;transition:opacity .35s;pointer-events:none;font-size:13px;text-align:center}#touch{display:none;position:fixed;z-index:5;left:21px;bottom:28px;width:118px;height:118px;border:2px solid #ffffff54;border-radius:50%;background:#15445b82;touch-action:none}#nub{position:absolute;left:39px;top:39px;width:40px;height:40px;border-radius:50%;background:#bcf4e6a6;border:2px solid #e0fff8}#jump{display:none;position:fixed;z-index:5;bottom:45px;right:22px;width:68px;height:68px;border-radius:50%;background:#1b718bcb}#statusQuality{font-weight:700;color:#b3e8b6}#error{display:none;position:fixed;inset:0;z-index:40;padding:35px;background:#102630;color:#e9f5ee;line-height:1.7}.option{display:flex;justify-content:space-between;align-items:center;gap:8px}.option span{font-size:12px;color:#c7dbd7}#debug{white-space:pre-wrap;word-break:break-word;font:11px/1.5 ui-monospace,monospace;color:#a6e6d7;background:#061822;border-radius:9px;padding:9px;margin:8px 0 0;display:none}@media(pointer:coarse){#touch,#jump{display:block}.bottom{display:none}.hud{inset:9px 9px auto}.hud h1{font-size:14px}.panel{padding:9px 11px;border-radius:12px}.status{font-size:10px}.right button{padding:9px 10px}.modal{padding:20px;max-height:88dvh}#toast{top:86px}}@media(max-width:680px){.right{gap:4px}.right #cameraMode{display:none}.two{grid-template-columns:1fr}.hud .mini{display:none}}@media(pointer:coarse) and (orientation:portrait){.hud{max-width:100vw}#touch{bottom:27px}#jump{bottom:39px}}
+
+.lifeHud{position:fixed;inset:18px 18px auto 18px;z-index:6;pointer-events:none}.lifeHud .topRow{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}.lifeHud .glassCard{pointer-events:auto;background:linear-gradient(180deg,rgba(17,23,33,.84),rgba(18,27,39,.76));border:1px solid rgba(255,255,255,.16);box-shadow:0 14px 50px rgba(0,0,0,.24);backdrop-filter:blur(12px);border-radius:18px;color:#fff}.playerCard{display:flex;align-items:center;gap:14px;padding:10px 14px;min-width:370px}.avatarCircle{width:62px;height:62px;border-radius:18px;overflow:hidden;border:2px solid rgba(255,255,255,.38);background:radial-gradient(circle at 50% 30%,#ffebc2,#c98f6e 45%,#3f2a25 46%,#1a1e26 62%),linear-gradient(180deg,#4a6884,#18242f)}.lifeTitle{font-size:16px;font-weight:900;letter-spacing:.1em}.lifeMeta{font-size:13px;color:#e4e9ef;opacity:.95;margin-top:3px}.statCard{display:flex;align-items:center;gap:12px;padding:10px 14px;min-width:190px}.statIconCircle{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:20px;background:rgba(113,255,160,.15);border:1px solid rgba(255,255,255,.08)}.statLabel{font-size:12px;opacity:.86}.statValue{font-size:16px;font-weight:850}.meterWrap{min-width:250px;padding:10px 14px}.meterHeader{display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px}.meterTrack{height:12px;border-radius:999px;background:rgba(255,255,255,.12);overflow:hidden;border:1px solid rgba(255,255,255,.08)}.meterBar{height:100%;border-radius:999px}.energy .meterBar{background:linear-gradient(90deg,#64ff74,#41c768)}.hunger .meterBar{background:linear-gradient(90deg,#ffb138,#f39a27)}.hudStage{margin-top:12px;display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.objectiveCard{display:flex;gap:14px;padding:14px 16px;min-width:360px;max-width:520px}.objectivePin{width:28px;height:28px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(180deg,#ffcb56,#ff9f2e);color:#111;font-weight:900;box-shadow:0 6px 16px rgba(255,168,46,.35)}.objectiveTitle{font-size:18px;font-weight:820}.objectiveText{font-size:14px;color:#e8edf2;margin-top:4px}.objectiveMeta{font-size:12px;color:#c7d7de;margin-top:8px}.hudRight{display:flex;align-items:flex-start;gap:12px;pointer-events:auto}.hudButtons{display:flex;gap:10px}.hudIconBtn{width:54px;height:54px;border-radius:50%;background:linear-gradient(180deg,rgba(36,42,51,.88),rgba(18,21,28,.80));border:1px solid rgba(255,255,255,.15);box-shadow:0 10px 28px rgba(0,0,0,.22);color:#fff;font-size:14px;padding:0}.hudIconBtn.smallLabel{font-size:11px;padding:0 8px;border-radius:999px;width:auto;height:42px}.miniMapCard{width:180px;height:180px;border-radius:50%;position:relative;overflow:hidden;background:radial-gradient(circle at 50% 50%,rgba(60,70,78,.92),rgba(17,20,26,.95));border:2px solid rgba(255,255,255,.15);box-shadow:0 10px 28px rgba(0,0,0,.22)}.miniMapGrid{position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 34px,rgba(255,255,255,.04) 34px 36px),repeating-linear-gradient(0deg,transparent 0 34px,rgba(255,255,255,.04) 34px 36px)}.miniMapRoadA,.miniMapRoadB,.miniMapRoadC{position:absolute;background:#9ea6ab}.miniMapRoadA{width:18px;height:220px;left:82px;top:-20px;transform:rotate(0deg)}.miniMapRoadB{width:16px;height:220px;left:60px;top:-18px;transform:rotate(55deg)}.miniMapRoadC{width:14px;height:220px;left:110px;top:-24px;transform:rotate(-55deg)}.miniMapArrow{position:absolute;left:86px;top:74px;width:0;height:0;border-left:10px solid transparent;border-right:10px solid transparent;border-bottom:22px solid #46a8ff;transform:rotate(25deg);filter:drop-shadow(0 4px 6px rgba(0,0,0,.35))}.miniMapN{position:absolute;top:10px;left:50%;transform:translateX(-50%);font-size:16px;font-weight:900;color:#f4f7fa;text-shadow:0 2px 6px rgba(0,0,0,.38)}.promptBar{position:fixed;right:18px;bottom:18px;z-index:6;pointer-events:none}.promptBar .glassCard{padding:12px 18px;border-radius:14px;font-size:18px;font-weight:700}.promptBar .muted{font-size:13px;font-weight:500;margin-left:6px;opacity:.92}.actionButtons{position:fixed;right:28px;bottom:114px;z-index:6;display:flex;flex-direction:column;gap:14px;align-items:flex-end;pointer-events:none}.actionButtons .roundAction{pointer-events:auto;width:78px;height:78px;border-radius:50%;background:linear-gradient(180deg,rgba(33,37,44,.84),rgba(19,21,27,.76));border:1px solid rgba(255,255,255,.14);display:grid;place-items:center;color:#fff;box-shadow:0 10px 28px rgba(0,0,0,.2);font-size:33px}.actionButtons .roundAction.sm{width:64px;height:64px;font-size:28px;opacity:.92}.controlsBar{position:fixed;left:18px;bottom:18px;z-index:6;display:flex;gap:10px;align-items:center;padding:12px 16px;border-radius:16px;background:linear-gradient(180deg,rgba(14,19,26,.88),rgba(13,16,23,.72));border:1px solid rgba(255,255,255,.14);box-shadow:0 10px 28px rgba(0,0,0,.22);color:#fff}.controlsBar .tag{display:flex;align-items:center;gap:8px;padding:0 8px 0 0;border-right:1px solid rgba(255,255,255,.12);font-size:12px}.controlsBar .tag:last-child{border-right:none;padding-right:0}.controlsBar .iconPill{width:30px;height:30px;border-radius:10px;display:grid;place-items:center;background:rgba(255,255,255,.08)}.controlsBar strong{font-size:13px}.legacyBottom{display:none}.legacyJumpLabel{font-size:13px;line-height:1.1}.hudStatsTiny{display:block}.hudStatsTiny .status{margin-top:0}.hudQuality{display:none} @media(pointer:coarse){.lifeHud{inset:12px 12px auto 12px}.playerCard{min-width:0;flex:1}.statCard{min-width:0;flex:1}.meterWrap{min-width:0;flex:1}.hudStage{flex-direction:column;align-items:stretch}.objectiveCard{max-width:none;min-width:0}.hudRight{width:100%;justify-content:space-between}.miniMapCard{width:132px;height:132px}.hudButtons{gap:8px}.hudIconBtn{width:46px;height:46px}.controlsBar{display:none}.actionButtons{right:16px;bottom:132px}.actionButtons .roundAction{width:72px;height:72px}.promptBar{right:12px;bottom:16px}.promptBar .glassCard{padding:10px 14px;font-size:16px}.objectiveMeta{font-size:11px}} @media(max-width:960px){.topRow{flex-direction:column}.meterWrap{width:100%}}
+
+</style></head><body>
+<canvas id="game" tabindex="0" aria-label="Interactive 3D graphics lab"></canvas>
+<div class="lifeHud">
+  <div class="topRow">
+    <div class="glassCard playerCard">
+      <div class="avatarCircle"></div>
+      <div>
+        <div class="lifeTitle">LIFE</div>
+        <div class="lifeMeta">Age: 18 &nbsp;&nbsp; Day 1 &nbsp;&nbsp; <span id="lifeTime">7:12 AM</span></div>
+      </div>
+    </div>
+    <div class="glassCard statCard cashCard"><div class="statIconCircle">💵</div><div><div class="statLabel">Cash</div><div class="statValue" id="cashValue">$550.00</div></div></div>
+    <div class="glassCard meterWrap energy"><div class="meterHeader"><span>⚡ Energy</span><strong id="energyValue">100%</strong></div><div class="meterTrack"><div class="meterBar" style="width:100%"></div></div></div>
+    <div class="glassCard meterWrap hunger"><div class="meterHeader"><span>🍴 Hunger</span><strong id="hungerValue">100%</strong></div><div class="meterTrack"><div class="meterBar" style="width:100%"></div></div></div>
+  </div>
+  <div class="hudStage">
+    <div class="glassCard objectiveCard">
+      <div class="objectivePin">◆</div>
+      <div>
+        <div class="objectiveTitle" id="objectiveTitle">Parents’ Home</div>
+        <div class="objectiveText" id="objectiveText">Find Harbor Gas and apply for your first job.</div>
+        <div class="objectiveMeta"><span class="statusDot"></span><span id="modelStatus">Preparing environment…</span> · Quality <span id="statusQuality">auto</span> · <span id="fps">— fps</span></div>
+      </div>
+    </div>
+    <div class="hudRight">
+      <div class="hudButtons">
+        <button class="hudIconBtn" id="cameraMode">View</button>
+        <button class="hudIconBtn" id="settingsOpen">☰</button>
+      </div>
+      <div class="miniMapCard">
+        <div class="miniMapGrid"></div><div class="miniMapRoadA"></div><div class="miniMapRoadB"></div><div class="miniMapRoadC"></div><div class="miniMapN">N</div><div class="miniMapArrow"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="toast"></div><div class="legacyBottom bottom"><div class="legend">WASD move · Mouse drag look · Space jump · Shift run · C camera · Xbox: left stick move + right stick look simultaneously, X jump, RT run · Graphics Lab 07 targets a more premium realistic-life-sim look with a richer HUD and presentation</div></div><div id="touch"><div id="nub"></div></div><button id="jump"><span class="legacyJumpLabel">JUMP<br>X</span></button>
+<div class="controlsBar"><div class="tag"><div class="iconPill">🎮</div><div><div>Controls:</div><strong>Move</strong></div></div><div class="tag"><div class="iconPill">📷</div><div><div>Look</div><strong>Camera</strong></div></div><div class="tag"><div class="iconPill">✖</div><div><div>Interact</div><strong>Action</strong></div></div><div class="tag"><div class="iconPill">🕹️</div><div><div>Controller</div><strong>Supported</strong></div></div></div>
+<div class="actionButtons"><div class="roundAction sm">📷</div><div class="roundAction sm">🏃</div><button class="roundAction sm" style="font-size:26px" aria-label="Jump proxy">🪑</button><div class="roundAction">👊</div></div>
+<div class="promptBar"><div class="glassCard">⚠ <span class="muted">Press</span> 📱 <span class="muted">to open your phone.</span></div></div>
+<div class="modalWrap" id="intro"><div class="modal"><div class="kicker">Visual research · separate from your game</div><h2>Aiming closer to your realistic life-sim target.</h2><p>This is a <strong>standalone graphics experiment</strong>, not an upgrade to your live v0.8.1 game. This version uses your reference image as a visual north star: warm suburban sunrise lighting, a richer life-sim HUD, cleaner neighborhood presentation, and a more premium mobile/desktop look while keeping the movement foundation from the prior build.</p><p><strong>Heads-up:</strong> the human model loads from a public GLB reference library. If the model download fails, a procedural fallback will appear. An internet connection is required, just like your current game.</p><div class="buttons"><button class="primary" id="start">Create character →</button><button id="skipToLab">Quick enter lab</button><button id="introSettings">Graphics options</button></div><p class="note">No purchases, installs or changes to your main game save. Desktop and mobile share the same website. This build is mainly about world presentation and interface direction. Character systems are preserved, but the biggest changes are visual.</p></div></div>
+<div class="modalWrap hidden" id="creator"><div class="modal"><div class="kicker">Character creator</div><h3>Build your civilian</h3><p>Use this separate creator screen to define your player before entering the lab. These options affect the customizable civilian only.</p><div class="fields"><div class="two"><label><span>Character name</span><input id="playerName" maxlength="18" placeholder="Player name"></label><label><span>Gender style</span><select id="playerGender"><option value="masculine">Masculine</option><option value="feminine">Feminine</option><option value="neutral">Neutral</option></select></label><label><span>Body frame</span><select id="bodyType"><option value="slim">Slim</option><option value="average">Average</option><option value="athletic">Athletic</option></select></label><label><span>Skin tone</span><select id="skinTone"><option value="#f1c7a5">Light warm</option><option value="#d6a27c">Medium warm</option><option value="#b77852">Brown</option><option value="#7a5035">Deep brown</option></select></label><label><span>Hair style</span><select id="hairStyle"><option value="short">Short cut</option><option value="curly">Curly top</option><option value="bun">Top bun</option><option value="fade">Fade</option></select></label><label><span>Hair color</span><select id="hairColor"><option value="#1d1a18">Black</option><option value="#5b3a26">Brown</option><option value="#8f6a3d">Dark blonde</option><option value="#b7b7b7">Silver</option></select></label><label><span>Shirt color</span><select id="shirtColor"><option value="#385d6c">Blue</option><option value="#6a4639">Rust</option><option value="#566749">Olive</option><option value="#20252f">Black</option></select></label><label><span>Pants color</span><select id="pantsColor"><option value="#273948">Navy</option><option value="#4d3d35">Brown</option><option value="#59615b">Gray green</option><option value="#191c21">Black</option></select></label><label><span>Shoe color</span><select id="shoeColor"><option value="#17191d">Black</option><option value="#6a4d34">Brown</option><option value="#d8d8d8">White</option></select></label></div></div><div class="buttons"><button class="primary" id="creatorEnter">Enter lab →</button><button id="creatorApply">Apply and stay here</button><button id="creatorClose">Close</button></div><p class="note">Tip: after you enter the lab, use Graphics / controls for rendering and controller settings. Use Character creator when you want to change the player look.</p></div></div>
+<div class="modalWrap hidden" id="settings"><div class="modal"><div class="kicker">Graphics lab · settings</div><h3>Quality and controls</h3><div class="fields"><label>Rendering quality<select id="quality"><option value="auto">Auto (recommended)</option><option value="eco">Eco / older phone</option><option value="balanced">Balanced</option><option value="cinematic">Cinematic / desktop</option></select></label><label>Time of day <span id="sunLabel">Late afternoon</span><input type="range" id="sun" min="0" max="100" value="64"></label><label>Reference character<select id="character"><option value="custom">Customizable civilian (recommended)</option><option value="detailed">Imported animated soldier (experimental)</option></select></label><label>Character orientation<select id="orientation"><option value="auto">Auto-detect upright (recommended)</option><option value="original">Use original model orientation</option><option value="xplus">Rotate +90° around X</option><option value="xminus">Rotate −90° around X</option><option value="zplus">Rotate +90° around Z</option><option value="zminus">Rotate −90° around Z</option></select></label><label>Camera sensitivity <span id="senseLabel">2.3</span><input type="range" id="sense" min="0.7" max="5" step="0.1" value="2.3"></label><div class="two"><label><span>Invert movement horizontal</span><select id="invertX"><option value="normal">Normal</option><option value="invert">Inverted</option></select></label><label><span>Invert movement vertical</span><select id="invertY"><option value="normal">Normal</option><option value="invert">Inverted</option></select></label><label><span>Invert look horizontal</span><select id="lookX"><option value="normal">Normal</option><option value="invert">Inverted</option></select></label><label><span>Invert look vertical</span><select id="lookY"><option value="normal">Normal</option><option value="invert">Inverted</option></select></label></div><div class="option"><span>Controller input monitor</span><button id="toggleMonitor">Show input</button></div><div class="option"><span>Character appearance</span><button id="openCreatorFromSettings">Open character creator</button></div><pre id="debug"></pre></div><div class="buttons"><button class="primary" id="save">Return to lab</button><button id="reset">Reset graphics/controls</button></div><p class="note">Character appearance now lives in a separate creator screen so graphics and controls are easier to manage. Your choices are saved in this browser.</p></div></div>
+<div id="error" role="alert"></div>
+<script src="https://cdn.babylonjs.com/babylon.js"></script>
+<script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id), B=window.BABYLON;
+if(!B){$('error').style.display='block';$('error').textContent='The 3D engine could not load. Check your internet connection and reload this HTTPS page.';return}
+const canvas=$('game');let engine;
+try{engine=new B.Engine(canvas,true,{stencil:false,preserveDrawingBuffer:false},true)}catch(err){$('error').style.display='block';$('error').textContent='Your browser could not start WebGL: '+err.message;return}
+const mobile=matchMedia('(pointer:coarse)').matches, storeKey='secondlife-graphics-lab-07';
+const defaults={quality:'auto',sun:64,character:'custom',orientation:'auto',sense:2.3,invertX:'normal',invertY:'normal',lookX:'normal',lookY:'normal',showMonitor:false,playerName:'Jordan',playerGender:'masculine',bodyType:'athletic',skinTone:'#d6a27c',hairStyle:'short',hairColor:'#1d1a18',shirtColor:'#385d6c',pantsColor:'#273948',shoeColor:'#17191d'};
+let settings={...defaults};try{settings={...settings,...JSON.parse(localStorage.getItem(storeKey)||'{}')}}catch(_){}
+const saved=()=>{try{localStorage.setItem(storeKey,JSON.stringify(settings))}catch(_){}};
+function initLifeHud(){if($('lifeTime')) $('lifeTime').textContent='7:12 AM'; if($('cashValue')) $('cashValue').textContent='$550.00'; if($('energyValue')) $('energyValue').textContent='100%'; if($('hungerValue')) $('hungerValue').textContent='100%';}
+initLifeHud();
+function qualityLevel(){return settings.quality==='auto'?(mobile?'eco':'balanced'):settings.quality}
+let quality=qualityLevel();function applyQuality(){quality=qualityLevel();const ratio=window.devicePixelRatio||1;engine.setHardwareScalingLevel(quality==='eco'?Math.max(1.85,ratio/1.05):quality==='balanced'?Math.max(1.15,ratio/1.45):Math.max(.82,ratio/1.95));$('statusQuality').textContent=quality;engine.resize();if(shadow){shadow.blurKernel=quality==='cinematic'?40:quality==='balanced'?24:12;shadow.getShadowMap()?.refreshRate&&(shadow.getShadowMap().refreshRate=B.RenderTargetTexture.REFRESHRATE_RENDER_ONEVERYFRAME)} if(pipeline){pipeline.samples=quality==='cinematic'?4:1;pipeline.fxaaEnabled=quality!=='eco';pipeline.bloomEnabled=quality!=='eco';pipeline.bloomWeight=quality==='cinematic'?.22:quality==='balanced'?.14:.08;pipeline.bloomKernel=quality==='cinematic'?88:quality==='balanced'?64:38;pipeline.bloomThreshold=.84;pipeline.sharpenEnabled=quality!=='eco'; if(pipeline.sharpen){pipeline.sharpen.colorAmount=quality==='cinematic'?1.0:.72;pipeline.sharpen.edgeAmount=quality==='cinematic'?.55:.38;}}}
+let shadow=null,pipeline=null;applyQuality();
+const scene=new B.Scene(engine);scene.clearColor=new B.Color4(.73,.82,.91,1);scene.fogMode=B.Scene.FOGMODE_EXP2;scene.fogDensity=.0022;scene.fogColor=new B.Color3(.80,.86,.90);
+scene.imageProcessingConfiguration.toneMappingEnabled=true;scene.imageProcessingConfiguration.toneMappingType=B.ImageProcessingConfiguration.TONEMAPPING_ACES;scene.imageProcessingConfiguration.contrast=1.24;scene.imageProcessingConfiguration.exposure=.96;scene.imageProcessingConfiguration.vignetteEnabled=true;scene.imageProcessingConfiguration.vignetteWeight=.33;scene.imageProcessingConfiguration.vignetteStretch=0.15;scene.imageProcessingConfiguration.colorCurvesEnabled=false;scene.environmentIntensity=1.18;
+const camera=new B.FreeCamera('manual chase',new B.Vector3(5,4,17),scene);camera.minZ=.12;camera.maxZ=340;camera.fov=.93;camera.inputs.clear();camera.setTarget(new B.Vector3(-2,2,-5));
+let yaw=0.1,pitch=.13,radius=10,mode='follow',lookDelta={x:0,y:0};
+const hemi=new B.HemisphericLight('ambient sky',new B.Vector3(0,1,0),scene);hemi.intensity=.68;hemi.groundColor=new B.Color3(.34,.39,.34);
+const sun=new B.DirectionalLight('sun',new B.Vector3(-.8,-1,-.4),scene);sun.position.set(45,90,65);sun.intensity=1.62;
+shadow=new B.ShadowGenerator(mobile?1024:2048,sun);shadow.useBlurExponentialShadowMap=true;shadow.blurKernel=quality==='cinematic'?40:quality==='eco'?12:24;shadow.bias=.00018;shadow.normalBias=.014;
+pipeline=new B.DefaultRenderingPipeline('visual pipeline',true,scene,[camera]); pipeline.imageProcessingEnabled=true; pipeline.fxaaEnabled=true; pipeline.bloomEnabled=true; pipeline.bloomThreshold=.84; pipeline.bloomWeight=.15; pipeline.bloomKernel=64; pipeline.sharpenEnabled=true; if(pipeline.sharpen){pipeline.sharpen.colorAmount=.72; pipeline.sharpen.edgeAmount=.38;} applyQuality();
+function toColor(c){return B.Color3.FromHexString(c)}
+function pbr(n,albedo,metal=0,rough=.85){let m=new B.PBRMaterial(n,scene);m.albedoColor=toColor(albedo);m.metallic=metal;m.roughness=rough;return m}
+function dynamicTex(n,size,draw,tileX=1,tileY=1){const t=new B.DynamicTexture(n,{width:size,height:size},scene,false);draw(t.getContext(),size);t.uScale=tileX;t.vScale=tileY;t.update(false);return t}
+function seeded(seed){let s=seed>>>0;return ()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296}}
+function grain(ctx,size,seed,amount=15000){const r=seeded(seed);for(let i=0;i<amount;i++){const q=Math.floor(90+r()*140);ctx.fillStyle=`rgba(${q},${q},${q},${r()*.24})`;ctx.fillRect(r()*size,r()*size,1+r()*3,1+r()*3)}}
+function texPbr(name,color,draw,tx=1,ty=1,rough=.88){const m=pbr(name,color,0,rough);m.albedoTexture=dynamicTex(name+' texture',512,draw,tx,ty);return m}
+const siding=texPbr('weatherboard','#e9e8df',(c,s)=>{c.fillStyle='#e7e5d9';c.fillRect(0,0,s,s);for(let y=0;y<s;y+=30){c.fillStyle='#b7bdb8';c.fillRect(0,y+26,s,3);c.fillStyle='#f3f2ed';c.fillRect(0,y,s,3)}grain(c,s,117,4200)},3.5,2.1,.86);
+const brick=texPbr('weathered brick','#eee6db',(c,s)=>{c.fillStyle='#b59c87';c.fillRect(0,0,s,s);const r=seeded(84);for(let y=0;y<s;y+=34)for(let x=-72+(Math.floor(y/34)%2)*72;x<s;x+=144){let hue=115+Math.floor(r()*58);c.fillStyle=`rgb(${hue+38},${hue+15},${hue})`;c.fillRect(x+3,y+3,137,28);c.fillStyle='rgba(243,232,221,.18)';c.fillRect(x+3,y+4,137,2)}grain(c,s,517,5200)},2.6,1.7,.9);
+const asphalt=texPbr('rough asphalt','#626262',(c,s)=>{c.fillStyle='#3d4348';c.fillRect(0,0,s,s);grain(c,s,290,18000);const r=seeded(39);for(let i=0;i<30;i++){c.strokeStyle='rgba(29,30,32,.22)';c.lineWidth=1+r()*2;c.beginPath();let x=r()*s,y=r()*s;c.moveTo(x,y);for(let k=0;k<8;k++){x+=(r()-.5)*33;y+=(r()-.5)*25;c.lineTo(x,y)}c.stroke()}for(let i=0;i<600;i++){c.fillStyle=`rgba(${150+Math.floor(r()*50)},${150+Math.floor(r()*50)},${145+Math.floor(r()*45)},${.03+r()*.05})`;c.beginPath();c.arc(r()*s,r()*s,r()*2.7,0,7);c.fill()}},7,2,.98);
+const concrete=texPbr('poured concrete','#dddcd3',(c,s)=>{c.fillStyle='#c9cbc5';c.fillRect(0,0,s,s);grain(c,s,600,9000);c.strokeStyle='#8a969455';c.lineWidth=3;for(let j=0;j<5;j++){c.beginPath();c.moveTo(j*s/4,0);c.lineTo(j*s/4,s);c.stroke()}for(let j=0;j<3;j++){c.beginPath();c.moveTo(0,j*s/2);c.lineTo(s,j*s/2);c.stroke()}},6,1.6,.92);
+const lawn=texPbr('natural lawn','#b9c3aa',(c,s)=>{c.fillStyle='#6a875a';c.fillRect(0,0,s,s);const r=seeded(434);for(let i=0;i<22000;i++){let g=62+Math.floor(r()*82);c.fillStyle=`rgba(${22+Math.floor(r()*34)},${g+42},${18+Math.floor(r()*38)},${.24+r()*.42})`;let x=r()*s,y=r()*s;c.fillRect(x,y,1+r()*2,3+r()*6)}for(let i=0;i<350;i++){c.fillStyle='rgba(124,150,88,.10)';c.beginPath();c.arc(r()*s,r()*s,3+r()*10,0,7);c.fill()}},15,15,.99);
+const shingles=texPbr('weathered roof shingles','#8d9293',(c,s)=>{c.fillStyle='#62686b';c.fillRect(0,0,s,s);const r=seeded(78);for(let y=0;y<s;y+=26)for(let x=-40+(Math.floor(y/26)%2)*41;x<s;x+=82){let v=80+Math.floor(r()*55);c.fillStyle=`rgb(${v},${v+3},${v+4})`;c.fillRect(x+1,y+1,80,23);c.fillStyle='#373e4166';c.fillRect(x+1,y+22,80,3)}grain(c,s,99,2600)},3,3,.97);
+const bark=texPbr('tree bark','#b0a08b',(c,s)=>{c.fillStyle='#5d5548';c.fillRect(0,0,s,s);const r=seeded(998);for(let i=0;i<4200;i++){const v=70+Math.floor(r()*50);c.fillStyle=`rgba(${v},${v-8},${v-12},${.3+r()*.5})`;c.fillRect(r()*s,r()*s,1+r()*8,4+r()*50)}},1,2,.97);
+const wood=pbr('warm oak','#98775a',0,.72),trim=pbr('white trims','#f0ece3',0,.56),glass=pbr('window glazing','#8db8c8',.18,.03),dark=pbr('window frames','#343f42',.23,.40),doorMat=pbr('painted entry door','#2f524e',0,.50),stone=pbr('stone work','#b2aea6',0,.88),walkMat=concrete,curbMat=pbr('curb','#d0d0cb',0,.86),roadPaint=pbr('road markings','#eee9d8',0,.86),brickWalk=pbr('landscaping pavers','#a37c69',0,.84),leafA=pbr('oak foliage','#537747',0,1),leafB=pbr('leaf highlight','#759356',0,1),leafC=pbr('leaf shade','#425c36',0,1),carPaint=pbr('car body','#2a4250',.72,.18),tires=pbr('tires','#181c21',0,1),carLights=pbr('headlamps','#ffebcd',0,.16);
+glass.clearCoat.isEnabled=true;glass.clearCoat.intensity=.98;glass.clearCoat.roughness=.04;glass.alpha=.94;glass.environmentIntensity=1.25;glass.emissiveColor=new B.Color3(.04,.06,.08);
+carPaint.clearCoat.isEnabled=true;carPaint.clearCoat.intensity=.95;carPaint.clearCoat.roughness=.08;carPaint.environmentIntensity=1.25;
+leafA.subSurface.isRefractionEnabled=false; leafA.environmentIntensity=.9; leafB.environmentIntensity=.9; leafC.environmentIntensity=.9;
+const metal=pbr('brushed steel','#878f92',.88,.22),interiorShade=pbr('window curtain','#a4a398',0,.95);
+const terrain=[];function meshBox(n,w,h,d,x,y,z,m,cast=false,receive=false){const q=B.MeshBuilder.CreateBox(n,{width:w,height:h,depth:d},scene);q.position.set(x,y,z);q.material=m;if(cast)shadow.addShadowCaster(q);if(receive)q.receiveShadows=true;terrain.push(q);return q}
+function plane(n,w,h,x,y,z,m,angleX=Math.PI/2){const q=B.MeshBuilder.CreatePlane(n,{width:w,height:h},scene);q.position.set(x,y,z);q.rotation.x=angleX;q.material=m;q.receiveShadows=true;return q}
+function cyl(n,rad,h,x,y,z,m,sub=16){let q=B.MeshBuilder.CreateCylinder(n,{height:h,diameter:rad*2,tessellation:sub},scene);q.position.set(x,y,z);q.material=m;shadow.addShadowCaster(q);return q}
+function ball(n,r,x,y,z,m,seg=12){let q=B.MeshBuilder.CreateSphere(n,{diameter:r*2,segments:seg},scene);q.position.set(x,y,z);q.material=m;return q}
+// Ground: one walkable demo block, two neighboring houses, detailed feature home.
+meshBox('broad suburban terrain',180,.25,180,0,-.18,0,lawn,false,true);
+meshBox('two lane local road',180,.09,11,0,-.035,16,asphalt,false,true);
+for(const z of [8.95,23.05]){meshBox('continuous curb',180,.24,.24,0,.08,z,curbMat);meshBox('sidewalk',180,.10,2.3,0,.035,z+(z<16?-1.4:1.4),concrete,false,true)}
+for(let x=-85;x<90;x+=12){meshBox('painted centerline',5.2,.02,.095,x,.04,16,roadPaint)}
+for(let x=-85;x<90;x+=9){meshBox('driveway curb seam',.045,.01,2.1,x,.11,7.65,curbMat)}
+// House main footprint (-5, -7): two floors + pitched roof.
+const HOME_X=-5,HOME_Z=-6;
+function house(x,z,featured=true,tint='cream'){
+const w=featured?14.5:13,d=featured?10.5:10,wall=featured?siding:brick;
+meshBox('house foundations',w+.8,.48,d+.8,x,.22,z,brick,true,true);
+meshBox('house walls',w,6.5,d,x,3.7,z,wall,true,true);
+// Joined, measured pitched roof: the ridge, slopes and eaves share their exact endpoints.
+// Graphics Lab 01 rotated left/right panels the wrong way, making a floating V in screenshots.
+const eaveY=6.91,ridgeY=9.29,halfSpan=(w+1.1)/2;
+const rise=ridgeY-eaveY,run=halfSpan,pitch=Math.atan2(rise,run),panelLength=Math.hypot(run,rise)+.20;
+const roofFront=z+d/2+.67;
+for(const side of [-1,1]){
+ const section=meshBox('connected shingle roof slope',panelLength,.24,d+1.45,
+   x+side*halfSpan/2,(eaveY+ridgeY)/2,z,shingles,true);
+ section.rotation.z=-side*pitch;
+}
+meshBox('connected ridge trim',.35,.28,d+1.60,x,ridgeY,z,shingles,true);
+for(const side of [-1,1]){
+ meshBox('eave fascia',.19,.34,d+1.46,x+side*halfSpan,eaveY-.12,z,trim,true);
+}
+// Triangular gable below pitched roof, with no floating cap or roof intersections.
+for(const end of [-1,1]){
+ const gable=new B.Mesh('house gable triangle',scene);
+ const vertices=[x-halfSpan,eaveY,z+end*(d/2+.045),x+halfSpan,eaveY,z+end*(d/2+.045),x,ridgeY,z+end*(d/2+.045)];
+ const vd=new B.VertexData();vd.positions=vertices;vd.indices=end>0?[0,1,2]:[2,1,0];vd.normals=[];
+ B.VertexData.ComputeNormals(vd.positions,vd.indices,vd.normals);vd.applyToMesh(gable);
+ gable.material=wall;gable.isPickable=false;shadow.addShadowCaster(gable);
+}
+
+// Front door and vestibule
+const front=z+d/2+.085;
+meshBox('ornamental porch slab',featured?6.5:5.4,.24,3.2,x,.31,front+1.36,stone,true);
+meshBox('door inset surround',2.7,3.65,.18,x,2.0,front+.14,trim,true);
+meshBox('solid front door',2.12,3.28,.21,x,1.91,front+.26,doorMat,true);
+meshBox('door handle',.1,.3,.16,x+.76,1.92,front+.40,metal);
+meshBox('door glass pane',.85,1.12,.10,x,2.55,front+.4,glass);
+meshBox('over-door transom',2.15,.26,.12,x,3.69,front+.35,glass);
+for(const side of [-1,1]){
+ for(const h of [2.05,4.89]){
+  let wx=x+side*(featured?4.6:4.2);
+  meshBox('casement outer window frame',2.8,2.05,.25,wx,h,front+.17,trim,true);
+  meshBox('dark window sash',2.42,1.72,.28,wx,h,front+.34,dark);
+  meshBox('reflective glass window',2.2,1.52,.15,wx,h,front+.47,glass);
+  meshBox('window mullion',.09,1.52,.17,wx,h,front+.57,trim);
+  meshBox('window crossbar',2.2,.07,.17,wx,h,front+.57,trim);
+  meshBox('stone window sill',3.04,.13,.46,wx,h-1.08,front+.48,stone);
+  meshBox('louvered shutter',.38,1.96,.30,wx+side*1.62,h,front+.32,doorMat,true);
+ }
+ // lanterns
+ const postX=x+side*1.68;
+ meshBox('porch lantern bracket',.18,.2,.5,postX,3.05,front+.6,dark);
+ meshBox('warm porch lamp',.25,.45,.28,postX,2.79,front+.7,carLights);
+}
+if(featured){
+ for(let i=-2;i<=2;i++){let pX=x+i*1.3;if(Math.abs(i)<1)continue;meshBox('porch post',.18,3.2,.18,pX,1.95,front+2.75,trim,true)}
+ meshBox('porch beam',6.3,.22,.25,x,3.48,front+2.74,trim,true);
+ for(let i=0;i<3;i++)meshBox('front porch step',4.9-i*.3,.12,.56,x,.19-i*.055,front+3.2+i*.48,stone);
+ // house foundation and walkway
+ meshBox('front stone walkway',2.6,.09,7.5,x,.075,front+7.15,concrete,false,true);
+ // garden planting beds
+ for(const side of [-1,1])for(let t=0;t<5;t++){
+  const px=x+side*(2.5+t*.9),pz=front+3.65+Math.sin(t)*.4;
+  ball('flower shrub',.32,px,.41,pz,t%2?leafA:leafB,10);
+  ball('colorful flowers',.12,px,.77,pz, t%2?pbr('red blooms','#a75155'):pbr('yellow blooms','#dbaf65'),8);
+ }
+}
+return {x,z,w,d,front}
+}
+const featuredHouse=house(HOME_X,HOME_Z,true);
+house(-31,-13,false);house(23,-17,false);
+// Front driveway and low stone wall.
+meshBox('driveway parking entrance',4.4,.09,18,6.7,.07,1.6,concrete,false,true);
+meshBox('driveway edge bricks',.2,.14,18,4.45,.1,1.6,brickWalk);
+meshBox('driveway edge bricks',.2,.14,18,8.95,.1,1.6,brickWalk);
+for(let side of [-1,1]){
+ const xx=HOME_X+side*8.4;
+ for(let zz=-11;zz<8;zz+=4.7)meshBox('fence stone pillar',.36,1.4,.36,xx,.7,zz,stone,true);
+ for(let zz=-11;zz<7.2;zz+=1.6)meshBox('cedar fence plank',.1,1.03,1.50,xx,.68,zz+.7,wood,true);
+}
+// Car with multiple body layers, windshield, wheel arches, rims and clear glass.
+function car(x,z,rot=0){const root=new B.TransformNode('parked sedan',scene);root.position.set(x,.23,z);root.rotation.y=rot;
+function part(n,w,h,d,px,py,pz,m){let q=meshBox(n,w,h,d,0,0,0,m,true);q.parent=root;q.position.set(px,py,pz);return q}
+part('lower chassis',1.82,.52,4.25,0,.55,0,carPaint);part('rounded hood',1.81,.21,1.30,0,.94,1.32,carPaint);
+let cabin=part('upper cabin',1.54,.81,2.15,0,1.19,-.34,carPaint);cabin.scaling.x=.97;
+for(let side of [-1,1]){part('side windows front',.045,.43,.80,side*.78,1.39,.19,glass);part('side windows rear',.045,.43,.80,side*.78,1.39,-.93,glass)}
+part('windshield',1.39,.50,.035,0,1.43,.62,glass);part('rear windshield',1.32,.49,.035,0,1.42,-1.43,glass);
+for(let side of [-1,1])for(let zz of [-1.32,1.28]){
+ let wheel=B.MeshBuilder.CreateCylinder('radial tire',{diameter:.83,height:.29,tessellation:24},scene);wheel.parent=root;wheel.position.set(side*.94,.42,zz);wheel.rotation.z=Math.PI/2;wheel.material=tires;
+ let rim=B.MeshBuilder.CreateCylinder('alloy wheel',{diameter:.49,height:.31,tessellation:16},scene);rim.parent=root;rim.position.set(side*1.01,.42,zz);rim.rotation.z=Math.PI/2;rim.material=metal;
+}
+for(let side of [-1,1]){part('tail light',.43,.17,.07,side*.59,.69,-2.16,pbr('brake light','#d9544d',0,.25));part('headlight',.42,.17,.09,side*.62,.75,2.17,carLights);part('side mirror',.21,.18,.29,side*.91,1.28,.55,carPaint)}
+return root}
+car(6.6,1.6,0);
+// Trees: branching trunks with hundreds of non-spherical leafy clusters rather than green balls.
+function tree(x,z,height=7.6,seed=7){const rand=seeded(seed),root=new B.TransformNode('oak tree',scene);root.position.set(x,0,z);
+function member(n,h,r1,r2,px,py,pz,m,rotation){let q=B.MeshBuilder.CreateCylinder(n,{height:h,diameterTop:r1*2,diameterBottom:r2*2,tessellation:10},scene);q.parent=root;q.position.set(px,py,pz);if(rotation)q.rotation.copyFrom(rotation);q.material=m;shadow.addShadowCaster(q);return q}
+member('textured trunk',height*.6,.18,.37,0,height*.30,0,bark);
+const leaves=[leafA,leafB,leafC];
+for(let b=0;b<8;b++){const a=b*Math.PI*2/8+rand()*.17,dist=1.45+rand()*.95;
+ const py=height*.54+rand()*1.6,cx=Math.cos(a)*dist,cz=Math.sin(a)*dist;
+ const branch=member('natural branch',2.65,.08,.17,cx*.5,py-.55,cz*.5,bark,new B.Vector3(Math.sin(a)*.5,0,-Math.cos(a)*.53));
+ for(let k=0;k<10;k++){
+  const px=cx+(rand()-.5)*2.7,py2=py+(rand()-.5)*2.1,pz=cz+(rand()-.5)*2.6;
+  let l=B.MeshBuilder.CreateSphere('irregular leaf cluster',{diameter:1,segments:6},scene);l.parent=root;l.position.set(px,py2,pz);l.scaling.set(.36+rand()*.5,.24+rand()*.4,.38+rand()*.49);l.rotation.set(rand()*1.8,rand()*6,rand()*1.9);l.material=leaves[Math.floor(rand()*leaves.length)];
+ }
+}return root}
+for(const [x,z,h,k] of [[-20,-1,8,7],[14,-7,9,21],[-37,-4,6,31],[28,-1,7,54]])tree(x,z,h,k);
+// Clumps of grass near path and driveway: instanced for low GPU overhead.
+const bladeMat=pbr('sunlit groundgrass','#91a36f',0,1);bladeMat.backFaceCulling=false;
+const bladeBase=B.MeshBuilder.CreatePlane('cluster seed',{size:1.1},scene);bladeBase.material=bladeMat;bladeBase.isVisible=false;
+const rng=seeded(456);for(let i=0;i<270;i++){
+ const x=-26+rng()*51,z=-18+rng()*27;
+ if(Math.abs(x-HOME_X)<7.7&&z>-11&&z<-1)continue;
+ if(z>7||z< -16)continue;
+ if(x>4.4&&x<9.0&&z>-8)continue;
+ let grass1=bladeBase.createInstance('grass tussock');grass1.position.set(x,.27,z);grass1.scaling.set(.35+rng()*.4,.25+rng()*.45,1);grass1.rotation.y=rng()*6.28;
+}
+function streetLight(x,z){cyl('lamp post',.075,6,x,3,z,metal,12);const arm=meshBox('lamp arm',1.1,.12,.14,x+.50,5.75,z,metal);ball('lamp diffuser',.23,x+1.05,5.63,z,carLights);const halo=ball('lamp halo',.14,x+1.05,5.63,z,pbr('lamp glow','#ffe9bb',0,.04),10);halo.material.emissiveColor=new B.Color3(1,.88,.62)}
+streetLight(-18,10.2);streetLight(19,10.2);streetLight(-18,21.8);streetLight(19,21.8);
+// Porch and driveway details.
+function hedge(x,z,len=2.5){for(let i=0;i<Math.max(2,Math.round(len*1.3));i++){const px=x-len/2+i*(len/Math.max(1,Math.round(len*1.3)-1));let h=ball('trimmed hedge',.46,px,.53,z,i%2?leafA:leafB,12);h.scaling.y=.82;h.scaling.z=1.15;shadow.addShadowCaster(h)}}
+hedge(HOME_X-4.6,1.65,2.9); hedge(HOME_X+4.6,1.65,2.9); hedge(HOME_X, -10.4,4.0);
+meshBox('mailbox post',.11,1.25,.11,HOME_X+3.55,.63,6.05,wood,true); meshBox('mailbox box',.42,.33,.72,HOME_X+3.72,1.05,6.05,pbr('mailbox blue','#41667b',.22,.42),true); meshBox('mailbox flag',.03,.18,.16,HOME_X+3.95,1.10,6.36,pbr('flag red','#b4554b',0,.5),true);
+meshBox('driveway shadow paver',4.0,.03,1.2,6.7,.105,-6.0,brickWalk,false,true);
+for(const sx of [-1,1]) for(let i=0;i<3;i++){ball('potted plant leaves',.22,HOME_X+sx*(3.2+i*.32),.66,-.55+i*.1, i%2?leafB:leafA,10)}
+// Atmospheric dome + translucent cloud bands + sun disc.
+const sky=new B.DynamicTexture('sky gradient',{width:16,height:1024},scene,false);const sc=sky.getContext();let gradient=sc.createLinearGradient(0,0,0,1024);gradient.addColorStop(0,'#22406e');gradient.addColorStop(.36,'#5d84b3');gradient.addColorStop(.62,'#97bfd6');gradient.addColorStop(1,'#f1d4af');sc.fillStyle=gradient;sc.fillRect(0,0,16,1024);sky.update(false);
+const skyMat=new B.StandardMaterial('sky atmosphere',scene);skyMat.diffuseTexture=sky;skyMat.emissiveTexture=sky;skyMat.disableLighting=true;skyMat.backFaceCulling=false;
+const dome=B.MeshBuilder.CreateSphere('skybox',{diameter:340,segments:24},scene);dome.material=skyMat;dome.infiniteDistance=true;dome.isPickable=false;dome.applyFog=false;
+const cloudTex=new B.DynamicTexture('cloud texture',{width:512,height:256},scene,true);const cc=cloudTex.getContext();cc.clearRect(0,0,512,256);for(const [x,y,r] of [[120,138,56],[170,122,68],[238,135,78],[305,128,60],[368,140,48],[205,155,50]]){const g=cc.createRadialGradient(x,y,8,x,y,r);g.addColorStop(0,'rgba(255,255,255,.90)');g.addColorStop(.55,'rgba(255,255,255,.55)');g.addColorStop(1,'rgba(255,255,255,0)');cc.fillStyle=g;cc.beginPath();cc.arc(x,y,r,0,7);cc.fill()}cloudTex.update();
+const cloudMat=new B.StandardMaterial('cloud material',scene);cloudMat.diffuseTexture=cloudTex;cloudMat.opacityTexture=cloudTex;cloudMat.emissiveColor=new B.Color3(1,1,1);cloudMat.disableLighting=true;cloudMat.backFaceCulling=false;cloudMat.useAlphaFromDiffuseTexture=true;
+for(const [x,y,z,sx,sy] of [[-70,52,-95,34,14],[-8,56,-120,48,16],[72,50,-110,30,12],[-90,44,-50,24,10],[92,47,-62,28,12]]){const cloud=B.MeshBuilder.CreatePlane('cloud plane',{width:sx,height:sy},scene);cloud.position.set(x,y,z);cloud.billboardMode=B.Mesh.BILLBOARDMODE_ALL;cloud.material=cloudMat;cloud.applyFog=false;cloud.isPickable=false}
+const sunDisc=B.MeshBuilder.CreateDisc('sun disc',{radius:8,tessellation:32},scene);sunDisc.position.set(92,56,-130);sunDisc.billboardMode=B.Mesh.BILLBOARDMODE_ALL;const sunMat=new B.StandardMaterial('sun disc material',scene);sunMat.emissiveColor=new B.Color3(1,.84,.55);sunMat.disableLighting=true;sunMat.alpha=.88;sunDisc.material=sunMat;sunDisc.applyFog=false;
+// Distant landscape layers and skyline to make the world feel larger.
+meshBox('far terrain ridge a',250,14,24,0,5,-86,pbr('ridge green','#5a6d53',0,.96),false,true);
+meshBox('far terrain ridge b',250,11,18,0,7,76,pbr('ridge green b','#6d7e62',0,.98),false,true);
+meshBox('far tree line left',32,9,26,-96,5,-24,pbr('dark treeline','#4a5b46',0,1),false,true);
+meshBox('far tree line right',32,9,26,96,5,-10,pbr('dark treeline 2','#475743',0,1),false,true);
+for(let i=0;i<14;i++){const x=-108+i*16,z=-70+(i%4)*4;const h=8+(i%3)*3;const m=i%2?brick:siding; meshBox('distant block',13,h,11,x,h/2,z,m,true); meshBox('distant roof',14,.45,12,x,h+.2,z,shingles,true)}
+for(let i=0;i<10;i++){const x=-90+i*20, w=8+(i%3)*2, h=14+(i%4)*6; let b=meshBox('city silhouette',w,h,10,x,h/2,-112,pbr('skyline blue','#4d6076',0,.98),false,true); b.material.alpha=.92;}
+// Human reference loader. Preserve the complete GLB hierarchy (including TransformNodes and
+// skeleton bones): the 01 lab detached skinned meshes from their rig when re-parenting them.
+const actor=new B.TransformNode('player locomotion root',scene);actor.position.set(-2,0,6.15);
+let actorVisual=null,animationGroups=[],modelKey='',loadingSequence=0,animState='';
+let actorHeight=1.83,referenceMeshes=[],referencePivot=null,referenceFit=null,measuredOrientation='';
+let animMap={idle:null,walk:null,run:null,jump:null},animBlend={idle:1,walk:0,run:0,jump:0},modelYawOffset=0,moveBlend=0;
+let customRig=null;
+function colorVal(hex, fallback){return hex||fallback}
+function buildCustomAvatar(){const root=new B.TransformNode('custom civilian root',scene);root.parent=actor;customRig={root,time:0};
+ const skinMat=pbr('civilian skin',colorVal(settings.skinTone,'#d6a27c'),0,.92),shirtMat=pbr('civilian shirt',colorVal(settings.shirtColor,'#385d6c'),0,.84),pantsMat=pbr('civilian pants',colorVal(settings.pantsColor,'#273948'),0,.88),hairMat=pbr('civilian hair',colorVal(settings.hairColor,'#1d1a18'),0,.97),shoeMat=pbr('civilian shoes',colorVal(settings.shoeColor,'#17191d'),.05,.8),eyeMat=pbr('civilian eyes','#f5f8fa',0,.22);
+ const body=settings.bodyType, gender=settings.playerGender;
+ const bodyScale=body==='slim'?0.94:body==='athletic'?1.06:1.0;
+ const shoulder=gender==='feminine'?.36:gender==='neutral'?.39:.42;
+ const hips=gender==='feminine'?.34:gender==='neutral'?.31:.29;
+ const chestDepth=gender==='athletic'?.27:.24;
+ function ell(parent,n,x,y,z,sx,sy,sz,m,seg=26){let o=B.MeshBuilder.CreateSphere(n,{diameter:1,segments:seg},scene);o.parent=parent;o.position.set(x,y,z);o.scaling.set(sx,sy,sz);o.material=m;shadow.addShadowCaster(o);return o}
+ function cyl(parent,n,h,rt,rb,y,m,t=20){let c=B.MeshBuilder.CreateCylinder(n,{height:h,diameterTop:rt*2,diameterBottom:rb*2,tessellation:t},scene);c.parent=parent;c.position.y=y;c.material=m;shadow.addShadowCaster(c);return c}
+ const pelvis=customRig.pelvis=new B.TransformNode('pelvis',scene);pelvis.parent=root;pelvis.position.y=.96;
+ const spine=customRig.spine=new B.TransformNode('spine',scene);spine.parent=pelvis;spine.position.y=.22;
+ const chest=customRig.chest=new B.TransformNode('chest',scene);chest.parent=spine;chest.position.y=.28;
+ const neck=customRig.neck=new B.TransformNode('neck',scene);neck.parent=chest;neck.position.y=.30;
+ const headPivot=customRig.head=new B.TransformNode('head pivot',scene);headPivot.parent=neck;headPivot.position.y=.18;
+ ell(chest,'torso',0,.03,0,shoulder*1.45,.52*bodyScale,.27*bodyScale,shirtMat);
+ ell(pelvis,'hips',0,0,0,hips*1.6,.24*bodyScale,.25,pantsMat);
+ ell(neck,'neck',0,.02,.01,.10,.14,.10,skinMat,18);
+ ell(headPivot,'head',0,.10,.00,.26,.31,.24,skinMat,28);
+ ell(headPivot,'nose',0,.07,.18,.045,.05,.04,skinMat,14);ell(headPivot,'eye l',-.07,.13,.155,.026,.026,.022,eyeMat,10);ell(headPivot,'eye r',.07,.13,.155,.026,.026,.022,eyeMat,10);
+ const hairMain=ell(headPivot,'hair main',0,.18,.01,.28,.16,.26,hairMat,22), hairBack=ell(headPivot,'hair back',0,.17,-.10,.25,.18,.16,hairMat,18), hairSideL=ell(headPivot,'hair side l',-.15,.11,.0,.06,.16,.18,hairMat,14), hairSideR=ell(headPivot,'hair side r',.15,.11,.0,.06,.16,.18,hairMat,14), bun=ell(headPivot,'hair bun',0,.23,-.18,.10,.10,.10,hairMat,16), curl1=ell(headPivot,'curl1',-.12,.24,.0,.10,.10,.10,hairMat,12), curl2=ell(headPivot,'curl2',.12,.23,.02,.11,.11,.11,hairMat,12), curl3=ell(headPivot,'curl3',0,.27,-.03,.12,.10,.11,hairMat,12);
+ const shoulderL=customRig.shoulderL=new B.TransformNode('shoulder L',scene);shoulderL.parent=chest;shoulderL.position.set(-shoulder,.23,0);
+ const shoulderR=customRig.shoulderR=new B.TransformNode('shoulder R',scene);shoulderR.parent=chest;shoulderR.position.set(shoulder,.23,0);
+ cyl(shoulderL,'upper arm L',.46,.08,.09,-.23,shirtMat);cyl(shoulderR,'upper arm R',.46,.08,.09,-.23,shirtMat);ell(shoulderL,'upper arm cap L',0,-.01,0,.11,.11,.11,shirtMat,14);ell(shoulderR,'upper arm cap R',0,-.01,0,.11,.11,.11,shirtMat,14);
+ const elbowL=customRig.elbowL=new B.TransformNode('elbow L',scene);elbowL.parent=shoulderL;elbowL.position.y=-.46; const elbowR=customRig.elbowR=new B.TransformNode('elbow R',scene);elbowR.parent=shoulderR;elbowR.position.y=-.46;
+ cyl(elbowL,'forearm L',.42,.07,.06,-.20,skinMat);cyl(elbowR,'forearm R',.42,.07,.06,-.20,skinMat);ell(elbowL,'hand L',0,-.43,0,.07,.12,.09,skinMat,12);ell(elbowR,'hand R',0,-.43,0,.07,.12,.09,skinMat,12);
+ const hipL=customRig.hipL=new B.TransformNode('hip L',scene);hipL.parent=pelvis;hipL.position.set(-.15,-.08,0); const hipR=customRig.hipR=new B.TransformNode('hip R',scene);hipR.parent=pelvis;hipR.position.set(.15,-.08,0);
+ cyl(hipL,'thigh L',.74,.11,.13,-.37,pantsMat);cyl(hipR,'thigh R',.74,.11,.13,-.37,pantsMat);
+ const kneeL=customRig.kneeL=new B.TransformNode('knee L',scene);kneeL.parent=hipL;kneeL.position.y=-.74; const kneeR=customRig.kneeR=new B.TransformNode('knee R',scene);kneeR.parent=hipR;kneeR.position.y=-.74;
+ cyl(kneeL,'calf L',.63,.09,.07,-.31,pantsMat);cyl(kneeR,'calf R',.63,.09,.07,-.31,pantsMat);
+ const footL=customRig.footL=new B.TransformNode('foot L',scene);footL.parent=kneeL;footL.position.set(0,-.63,.06); const footR=customRig.footR=new B.TransformNode('foot R',scene);footR.parent=kneeR;footR.position.set(0,-.63,.06);
+ ell(footL,'shoe L',0,-.03,.10,.12,.07,.23,shoeMat,14); ell(footR,'shoe R',0,-.03,.10,.12,.07,.23,shoeMat,14);
+ const tag=ell(chest,'name plate',0,.58,.18,.18,.05,.02,trim,8); tag.visibility=.0;
+ const hs=settings.hairStyle; hairMain.visibility=hairBack.visibility=hairSideL.visibility=hairSideR.visibility=1; bun.visibility=curl1.visibility=curl2.visibility=curl3.visibility=0;
+ if(hs==='fade'){hairBack.visibility=.2;hairMain.scaling.y=.08;hairMain.position.y=.16;hairSideL.visibility=hairSideR.visibility=.7}
+ else if(hs==='bun'){bun.visibility=1;hairMain.scaling.y=.12;hairBack.visibility=1}
+ else if(hs==='curly'){curl1.visibility=curl2.visibility=curl3.visibility=1;hairMain.scaling.y=.10;hairBack.visibility=.4}
+ customRig.basePelvisY=.96; customRig.groundOffset=.61; customRig.name=settings.playerName||'Player';
+ $('modelStatus').textContent='Custom civilian · '+customRig.name;
+ return root}
+function getModelURL(key){return 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/models/gltf/Soldier.glb'}
+function meshBounds(meshes){
+ const min=new B.Vector3(Infinity,Infinity,Infinity),max=new B.Vector3(-Infinity,-Infinity,-Infinity);
+ let n=0;
+ for(const m of meshes){if(!(m instanceof B.AbstractMesh)||!m.getTotalVertices?.())continue;
+  m.computeWorldMatrix(true);
+  const bb=m.getBoundingInfo().boundingBox;
+  min.minimizeInPlace(bb.minimumWorld);max.maximizeInPlace(bb.maximumWorld);n++;
+ }
+ return n&&Number.isFinite(min.y)?{min,max,size:max.subtract(min)}:null;
+}
+function poseAngle(mode){
+ if(mode==='xplus')return [Math.PI/2,0,0];
+ if(mode==='xminus')return [-Math.PI/2,0,0];
+ if(mode==='zplus')return [0,0,Math.PI/2];
+ if(mode==='zminus')return [0,0,-Math.PI/2];
+ return [0,0,0];
+}
+function uprightAvatar(){
+ if(!referencePivot||!referenceFit||!referenceMeshes.length)return;
+ referenceFit.position.set(0,0,0);referenceFit.scaling.setAll(1);
+ referencePivot.rotationQuaternion=null;referencePivot.rotation.set(0,0,0);
+ referencePivot.computeWorldMatrix(true);
+ let raw=meshBounds(referenceMeshes);if(!raw)return;
+ let use=settings.orientation;
+ if(use==='auto'){
+  const dim=raw.size;
+  use=(dim.x>dim.y*1.24&&dim.x>dim.z)?'zplus':(dim.z>dim.y*1.24&&dim.z>dim.x)?'xminus':'original';
+ }
+ const r=poseAngle(use);modelYawOffset=(modelKey==='detailed'?Math.PI:0);referencePivot.rotation.set(r[0],modelYawOffset,r[2]);
+ let b=meshBounds(referenceMeshes);if(!b)return;
+ // Skeleton head/foot names can help reject an upside-down imported pose.
+ const headBone=scene.transformNodes.find(t=>t.name&&/head/i.test(t.name)&&t.isDescendantOf?.(referencePivot));
+ const feetBone=scene.transformNodes.find(t=>t.name&&/(leftfoot|rightfoot|foot)/i.test(t.name)&&t.isDescendantOf?.(referencePivot));
+ if(settings.orientation==='auto'&&headBone&&feetBone){
+   headBone.computeWorldMatrix(true);feetBone.computeWorldMatrix(true);
+   if(headBone.getAbsolutePosition().y<feetBone.getAbsolutePosition().y-.2){
+    referencePivot.rotation.x*=-1;referencePivot.rotation.z*=-1;
+    b=meshBounds(referenceMeshes)||b;use+=' (upright flipped)';
+   }
+ }
+ const height=Math.max(.15,b.size.y),scale=B.Scalar.Clamp(actorHeight/height,.001,100);
+ referenceFit.scaling.setAll(scale);
+ referenceFit.position.set(-((b.min.x+b.max.x)/2-actor.position.x)*scale,
+   -(b.min.y-actor.position.y)*scale,
+   -((b.min.z+b.max.z)/2-actor.position.z)*scale);
+ measuredOrientation=use;
+ $('modelStatus').textContent=(modelKey==='detailed'?'Animated human':'CesiumMan astronaut')+' · upright: '+use;
+}
+async function loadCharacter(key){
+ const ticket=++loadingSequence,prev=actorVisual,oldGroups=animationGroups;
+ animationGroups=[];animState='';modelKey=key;referenceMeshes=[];referencePivot=null;referenceFit=null;customRig=null;
+ if(key==='custom'){ if(prev)prev.dispose(false,true); oldGroups.forEach(g=>{try{g.stop();g.dispose()}catch(_){}}); actorVisual=buildCustomAvatar(); animMap={idle:null,walk:null,run:null,jump:null}; animBlend={idle:1,walk:0,run:0,jump:0}; measuredOrientation='custom'; notify('Customizable civilian loaded. Edit appearance in Graphics / controls.'); return }
+ $('modelStatus').textContent='Loading animated human model…';
+ try{
+  const url=getModelURL(key),cut=url.lastIndexOf('/')+1;
+  const result=await B.SceneLoader.ImportMeshAsync('',url.slice(0,cut),url.slice(cut),scene,undefined,'.glb');
+  if(ticket!==loadingSequence){result.meshes.forEach(m=>m.dispose());return}
+  for(const group of result.animationGroups||[])group.stop();
+  const fit=new B.TransformNode('character scale and ground alignment',scene);fit.parent=actor;
+  const pivot=new B.TransformNode('character upright orientation',scene);pivot.parent=fit;
+  // Critical: include BOTH mesh and transform nodes so no skinned child is orphaned.
+  const importedNodes=[...new Set([...(result.meshes||[]),...(result.transformNodes||[])])];
+  const nodeSet=new Set(importedNodes);
+  const rootNodes=importedNodes.filter(n=>n&&(!n.parent||!nodeSet.has(n.parent)));
+  rootNodes.forEach(n=>n.parent=pivot);
+  for(const m of result.meshes){m.isPickable=false;if(m instanceof B.AbstractMesh){m.receiveShadows=true;shadow.addShadowCaster(m)}}
+  actorVisual=fit;referenceFit=fit;referencePivot=pivot;referenceMeshes=result.meshes;
+  animationGroups=result.animationGroups||[];
+  uprightAvatar();
+  if(prev)prev.dispose(false,true);
+  oldGroups.forEach(g=>{try{g.stop();g.dispose()}catch(_){}});
+  for(const g of animationGroups){g.start(true,1);g.setWeightForAllAnimatables(0)}
+  animState='';setAnimation('idle');
+  notify('Upright model loaded with its original skeleton and animations.');
+ }catch(e){
+  if(ticket!==loadingSequence)return;
+  console.warn('Character model loading failed',e);
+  if(prev)prev.dispose(false,true);
+  oldGroups.forEach(g=>{try{g.stop();g.dispose()}catch(_){}});
+  animationGroups=[];animMap={idle:null,walk:null,run:null,jump:null};animBlend={idle:1,walk:0,run:0,jump:0};
+  $('modelStatus').textContent='Imported model unavailable';
+  notify('Model download failed; switching to the customizable civilian.');
+  settings.character='custom';
+  saved();
+  loadCharacter('custom');
+ }
+}
+function setAnimation(s){animState=s}
+function updateAnimationBlend(dt){if(!animationGroups.length)return;const target={idle:0,walk:0,run:0,jump:0};if(animState==='jump')target.jump=1;else if(animState==='run')target.run=1;else if(animState==='walk')target.walk=1;else target.idle=1;const roles=['idle','walk','run','jump'];for(const role of roles){animBlend[role]+=((target[role]||0)-animBlend[role])*Math.min(1,dt*7.5);const clip=animMap[role];if(clip)clip.setWeightForAllAnimatables(animBlend[role]);}if(animMap.walk)animMap.walk.speedRatio=.84+moveBlend*.42;if(animMap.run)animMap.run.speedRatio=.96+moveBlend*.35;if(animMap.idle)animMap.idle.speedRatio=1;const jumpLean=animState==='jump'?-0.08:0;if(referenceFit)referenceFit.rotation.x+=(jumpLean-referenceFit.rotation.x)*Math.min(1,dt*7);}
+function notify(msg){const el=$('toast');el.textContent=msg;el.style.opacity=1;clearTimeout(notify.timer);notify.timer=setTimeout(()=>el.style.opacity=0,3300)}
+function applySun(){const t=settings.sun/100,ang=.12+t*Math.PI*.78;sun.direction.set(-Math.cos(ang)*.5,-Math.max(.24,Math.sin(ang)), -.45);sun.intensity=1.02+1.36*Math.sin(ang);sun.diffuse=new B.Color3(1,.74+Math.sin(ang)*.20,.66+Math.sin(ang)*.27);hemi.intensity=.46+Math.sin(ang)*.34;scene.imageProcessingConfiguration.exposure=.80+Math.sin(ang)*.19;scene.fogDensity=.0019+((1-Math.sin(ang))*0.0012);scene.fogColor=new B.Color3(.80,.85,.90);$('sunLabel').textContent=t<.3?'Early morning':t<.70?'Late afternoon':'Golden hour'}
+function syncControls(){for(const name of ['quality','character','orientation','invertX','invertY','lookX','lookY','playerGender','bodyType','skinTone','hairStyle','hairColor','shirtColor','pantsColor','shoeColor']) if($(name)) $(name).value=settings[name]; if($('playerName')) $('playerName').value=settings.playerName||''; $('sun').value=settings.sun;$('sense').value=settings.sense;$('senseLabel').textContent=Number(settings.sense).toFixed(1);$('toggleMonitor').textContent=settings.showMonitor?'Hide input':'Show input';$('debug').style.display=settings.showMonitor?'block':'none';applySun()}
+const runAllowed=()=> $('intro').classList.contains('hidden')&&$('settings').classList.contains('hidden')&&$('creator').classList.contains('hidden');
+function hideIntro(){$('intro').classList.add('hidden');canvas.focus({preventScroll:true})}
+function openCreator(){syncControls();$('creator').classList.remove('hidden')}
+function closeCreator(){$('creator').classList.add('hidden');canvas.focus({preventScroll:true});saved()}
+function openSettings(){syncControls();$('settings').classList.remove('hidden')}
+function closeSettings(){$('settings').classList.add('hidden');canvas.focus({preventScroll:true});saved()}
+$('start').onclick=()=>{$('intro').classList.add('hidden');openCreator()};$('skipToLab').onclick=hideIntro;$('introSettings').onclick=()=>{hideIntro();openSettings()};$('settingsOpen').onclick=openSettings;$('save').onclick=closeSettings; if($('openCreatorFromSettings')) $('openCreatorFromSettings').onclick=()=>{$('settings').classList.add('hidden');openCreator()}; if($('creatorClose')) $('creatorClose').onclick=closeCreator; if($('creatorApply')) $('creatorApply').onclick=()=>{saved(); if(settings.character==='custom') loadCharacter('custom'); notify('Character updated')}; if($('creatorEnter')) $('creatorEnter').onclick=()=>{if(!$('intro').classList.contains('hidden')) $('intro').classList.add('hidden'); if(settings.character==='custom') loadCharacter('custom'); closeCreator()};
+$('reset').onclick=()=>{settings={...defaults};syncControls();applyQuality();loadCharacter(settings.character);saved();notify('Settings and character restored')};
+$('quality').onchange=e=>{settings.quality=e.target.value;applyQuality();saved()};$('character').onchange=e=>{settings.character=e.target.value;loadCharacter(settings.character);saved()};$('orientation').onchange=e=>{settings.orientation=e.target.value;uprightAvatar();saved()};$('sun').oninput=e=>{settings.sun=Number(e.target.value);applySun();saved()};$('sense').oninput=e=>{settings.sense=Number(e.target.value);$('senseLabel').textContent=Number(settings.sense).toFixed(1);saved()};
+for(const id of ['invertX','invertY','lookX','lookY'])$(id).onchange=e=>{settings[id]=e.target.value;saved()};
+for(const id of ['playerGender','bodyType','skinTone','hairStyle','hairColor','shirtColor','pantsColor','shoeColor']) if($(id)) $(id).onchange=e=>{settings[id]=e.target.value;saved(); if(settings.character==='custom') loadCharacter('custom')};
+if($('playerName')){$('playerName').oninput=e=>{settings.playerName=e.target.value.replace(/[^a-zA-Z0-9 _-]/g,'').slice(0,18); e.target.value=settings.playerName; saved(); if(customRig) $('modelStatus').textContent='Custom civilian · '+(settings.playerName||'Player')}}
+$('toggleMonitor').onclick=()=>{settings.showMonitor=!settings.showMonitor;syncControls();saved()};
+function cycleCamera(){mode=mode==='follow'?'orbit':mode==='orbit'?'detail':'follow';$('cameraMode').textContent='View: '+mode;notify(mode==='follow'?'Third-person follow camera':mode==='orbit'?'Free orbit around your character':'Static home showcase view')}
+$('cameraMode').onclick=cycleCamera;
+const keys={},touch={x:0,y:0};let drag=false,lastX=0,lastY=0,joyID=null,lookID=null;
+function textFocused(e){const t=e.target;return t instanceof Element&&!!t.closest('input,select,textarea,[contenteditable]')}
+addEventListener('keydown',e=>{if(textFocused(e))return;keys[e.key.toLowerCase()]=true;if([' ','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key))e.preventDefault();if(e.code==='Space'&&!e.repeat)jump();if(e.key.toLowerCase()==='c'&&!e.repeat)cycleCamera();if(e.key==='Escape'&&!e.repeat){if(!$('settings').classList.contains('hidden'))closeSettings();else openSettings()}});
+addEventListener('keyup',e=>{keys[e.key.toLowerCase()]=false});addEventListener('blur',()=>{for(const k of Object.keys(keys))keys[k]=false;touch.x=touch.y=0;drag=false});
+const stick=$('touch'),nub=$('nub');function moveTouch(e){const r=stick.getBoundingClientRect(),dx=e.clientX-r.left-r.width/2,dy=e.clientY-r.top-r.height/2;touch.x=Math.max(-1,Math.min(1,dx/50));touch.y=Math.max(-1,Math.min(1,dy/50));nub.style.transform=`translate(${touch.x*33}px,${touch.y*33}px)`}
+stick.addEventListener('pointerdown',e=>{joyID=e.pointerId;stick.setPointerCapture(joyID);moveTouch(e)});stick.addEventListener('pointermove',e=>{if(joyID===e.pointerId)moveTouch(e)});for(const event of ['pointerup','pointercancel'])stick.addEventListener(event,()=>{joyID=null;touch.x=touch.y=0;nub.style.transform='translate(0px,0px)'})
+canvas.addEventListener('pointerdown',e=>{if(e.button&&e.pointerType==='mouse')return;drag=true;lastX=e.clientX;lastY=e.clientY;canvas.setPointerCapture(e.pointerId)});canvas.addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-lastX,dy=e.clientY-lastY;lastX=e.clientX;lastY=e.clientY;lookDelta.x+=dx*.007;lookDelta.y+=dy*.006});for(const event of ['pointerup','pointercancel','lostpointercapture'])canvas.addEventListener(event,()=>drag=false);
+canvas.addEventListener('wheel',e=>{e.preventDefault();radius=Math.max(3.8,Math.min(14,radius+e.deltaY*.009))},{passive:false});
+$('jump').onclick=jump;let vy=0,grounded=true;function jump(){if(!runAllowed()||!grounded)return;grounded=false;vy=7.1;notify('Jump')}
+function ease(node,axis,target,dt,rate=10){if(!node)return;node.rotation[axis]+= (target-node.rotation[axis])*Math.min(1,dt*rate)}
+function updateCustomAvatar(dt,state,speed){if(!customRig)return;customRig.time+=dt*(state==='run'?11.2:state==='walk'?7.2:2.1);const t=customRig.time;const active=state==='run'?1:state==='walk'?Math.max(.35,Math.min(1,speed)):0;const cycle=Math.sin(t),cycle2=Math.sin(t+Math.PI),bounce=(1-Math.cos(t*2))*.5;
+ const armAmp=state==='run'?.95:state==='walk'?.62:.06, legAmp=state==='run'?.95:state==='walk'?.74:.05;
+ const pelvisDrop=active*(state==='run'?.06:.04)*bounce; const sideShift=active*.025*Math.sin(t);
+ customRig.pelvis.position.y=customRig.basePelvisY-pelvisDrop; customRig.pelvis.position.x=sideShift;
+ ease(customRig.spine,'x',state==='jump'?-0.12:0.05*active*bounce,dt,8); ease(customRig.spine,'z',-0.035*Math.sin(t)*active,dt,8); ease(customRig.chest,'y',0.07*cycle*active,dt,8); ease(customRig.chest,'z',0.04*cycle*active,dt,8);
+ ease(customRig.head,'x',state==='jump'?-0.15:0.02*Math.sin(t*2.1)*Math.max(.25,active),dt,8); ease(customRig.head,'y',-0.025*Math.sin(t)*active,dt,8);
+ ease(customRig.shoulderL,'x',cycle2*armAmp*active+(state==='jump'?.48:0),dt,10); ease(customRig.shoulderR,'x',cycle*armAmp*active+(state==='jump'?.48:0),dt,10);
+ ease(customRig.shoulderL,'z',-.2,dt,10); ease(customRig.shoulderR,'z',.2,dt,10);
+ ease(customRig.elbowL,'x',(.18+Math.max(0,-cycle2)*.68)*active+(state==='jump'?.35:0),dt,10); ease(customRig.elbowR,'x',(.18+Math.max(0,-cycle)*.68)*active+(state==='jump'?.35:0),dt,10);
+ ease(customRig.hipL,'x',cycle*legAmp*active+(state==='jump'?.42:0),dt,10); ease(customRig.hipR,'x',cycle2*legAmp*active+(state==='jump'?.42:0),dt,10);
+ ease(customRig.kneeL,'x',(.12+Math.max(0,-cycle)*1.05)*active+(state==='jump'?.58:0),dt,10); ease(customRig.kneeR,'x',(.12+Math.max(0,-cycle2)*1.05)*active+(state==='jump'?.58:0),dt,10);
+ ease(customRig.footL,'x',-.2+Math.max(0,cycle)*.42*active,dt,10); ease(customRig.footR,'x',-.2+Math.max(0,cycle2)*.42*active,dt,10);
+ if(state==='idle'){ease(customRig.shoulderL,'x',0.08,dt,8);ease(customRig.shoulderR,'x',0.08,dt,8);ease(customRig.elbowL,'x',0.10,dt,8);ease(customRig.elbowR,'x',0.10,dt,8);ease(customRig.hipL,'x',0.01,dt,8);ease(customRig.hipR,'x',0.01,dt,8);ease(customRig.kneeL,'x',0.12,dt,8);ease(customRig.kneeR,'x',0.12,dt,8);ease(customRig.footL,'x',-.12,dt,8);ease(customRig.footR,'x',-.12,dt,8);}
+}
+
+function axis(gp,i){const v=Number(gp?.axes?.[i]||0);return Math.abs(v)>.16?v:0}
+let lastGameButtons=[],padInfo='No controller detected';let input={moveX:0,moveY:0,lookX:0,lookY:0,run:false};
+function pollPad(){let gp;try{gp=Array.from(navigator.getGamepads?.()||[]).find(p=>p&&p.connected!==false)}catch(_){};
+if(!gp){lastGameButtons=[];input={moveX:0,moveY:0,lookX:0,lookY:0,run:false};padInfo='Not connected';return}
+const flip=id=>settings[id]==='invert'?-1:1;
+input={moveX:axis(gp,0)*flip('invertX'),moveY:axis(gp,1)*flip('invertY'),lookX:axis(gp,2)*flip('lookX'),lookY:axis(gp,3)*flip('lookY'),run:!!gp.buttons?.[7]?.pressed};
+const pressed=gp.buttons?.map(b=>!!b.pressed)||[];if(pressed[2]&&!lastGameButtons[2])jump();if(pressed[9]&&!lastGameButtons[9])openSettings();lastGameButtons=pressed;
+padInfo=gp.id.slice(0,56)}
+const hardObstacles=[{x:HOME_X,z:HOME_Z,w:15.5,d:11.4},{x:-31,z:-13,w:13.9,d:10.9},{x:23,z:-17,w:13.9,d:10.9},{x:6.7,z:1.6,w:2.2,d:4.7}];
+for(const [x,z] of [[-20,-1],[14,-7],[-37,-4],[28,-1]])hardObstacles.push({x,z,r:.48});
+function collides(x,z){if(x<-75||x>75||z<-40||z>37)return true;
+for(const q of hardObstacles){if('r'in q){if(Math.hypot(x-q.x,z-q.z)<q.r+.32)return true}else{const dx=Math.max(0,Math.abs(x-q.x)-q.w/2),dz=Math.max(0,Math.abs(z-q.z)-q.d/2);if(dx*dx+dz*dz<.38**2)return true}}return false}
+function safeMove(x,z){const dx=x-actor.position.x,dz=z-actor.position.z,n=Math.max(1,Math.ceil(Math.hypot(dx,dz)/.18));for(let i=0;i<n;i++){const nextX=actor.position.x+dx/n,nextZ=actor.position.z+dz/n;if(!collides(nextX,actor.position.z))actor.position.x=nextX;if(!collides(actor.position.x,nextZ))actor.position.z=nextZ}}
+
+function groundSurface(x,z){
+ let h=-0.055; // lawn base
+ if(z>=10.5&&z<=21.5)h=Math.max(h,0.01); // road top
+ if(z>=6.4&&z<=8.7)h=Math.max(h,0.085); // near sidewalk
+ if(z>=23.3&&z<=25.6)h=Math.max(h,0.085); // far sidewalk
+ // featured house front walk and driveway
+ if(x>=HOME_X-1.3&&x<=HOME_X+1.3&&z>=2.735&&z<=10.235)h=Math.max(h,0.12);
+ if(x>=4.5&&x<=8.9&&z>=-7.4&&z<=10.6)h=Math.max(h,0.115);
+ // porch slab and steps
+ if(x>=HOME_X-3.25&&x<=HOME_X+3.25&&z>=-0.905&&z<=2.295)h=Math.max(h,0.43);
+ if(x>=HOME_X-2.45&&x<=HOME_X+2.45&&z>=2.255&&z<=2.815)h=Math.max(h,0.25);
+ if(x>=HOME_X-2.30&&x<=HOME_X+2.30&&z>=2.735&&z<=3.295)h=Math.max(h,0.195);
+ if(x>=HOME_X-2.15&&x<=HOME_X+2.15&&z>=3.215&&z<=3.775)h=Math.max(h,0.14);
+ return h;
+}
+function actorGroundOffset(){return customRig?.groundOffset||0}
+
+let frame=0,seconds=0,monitorSeconds=0,lastFPS=60;
+applySun();syncControls();loadCharacter(settings.character); actor.position.y=groundSurface(actor.position.x,actor.position.z)+actorGroundOffset();
+engine.runRenderLoop(()=>{const dt=Math.min(.05,engine.getDeltaTime()/1000);pollPad();const canPlay=runAllowed();
+if(canPlay){yaw+=input.lookX*dt*settings.sense+lookDelta.x;pitch+=input.lookY*dt*settings.sense*.58+lookDelta.y;pitch=Math.max(-.15,Math.min(.85,pitch));}
+lookDelta.x=lookDelta.y=0;
+const ix=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0)+touch.x+input.moveX;
+const iy=(keys.w||keys.arrowup?1:0)-(keys.s||keys.arrowdown?1:0)-touch.y-input.moveY;
+let speed=Math.hypot(ix,iy),state='idle';
+moveBlend+=((Math.min(1,speed))-moveBlend)*Math.min(1,dt*6);
+if(canPlay&&speed>.1){const nx=ix/Math.max(1,speed),ny=iy/Math.max(1,speed);const forwardX=Math.sin(yaw),forwardZ=-Math.cos(yaw),rightX=Math.cos(yaw),rightZ=Math.sin(yaw);
+const rx=forwardX*ny+rightX*nx,rz=forwardZ*ny+rightZ*nx;const running=!!(keys.shift||input.run),dist=(running?6.6:3.65)*dt;safeMove(actor.position.x+rx*dist,actor.position.z+rz*dist);
+const targetRotation=Math.atan2(rx,rz);let turn=((targetRotation-actor.rotation.y+Math.PI*3)%(Math.PI*2))-Math.PI;actor.rotation.y+=turn*Math.min(1,dt*(running?9.5:7.5));state=running?'run':'walk'}
+const targetGroundY=groundSurface(actor.position.x,actor.position.z)+actorGroundOffset(); if(canPlay&&!grounded){vy-=19.5*dt;actor.position.y+=vy*dt;if(actor.position.y<=targetGroundY){actor.position.y=targetGroundY;vy=0;grounded=true}else state='jump'} else {actor.position.y += (targetGroundY-actor.position.y)*Math.min(1,dt*12)}
+setAnimation(state); if(customRig) updateCustomAvatar(dt,state,Math.min(1,speed)); else updateAnimationBlend(dt);
+const t=new B.Vector3(actor.position.x,1.36+actor.position.y,actor.position.z);
+let desired;
+if(mode==='detail')desired=new B.Vector3(15,7,18);
+else if(mode==='orbit')desired=new B.Vector3(t.x+Math.sin(yaw)*radius,t.y+2.2+pitch*4,t.z+Math.cos(yaw)*radius);
+else{const dir=new B.Vector3(Math.sin(yaw),0,-Math.cos(yaw));const elev=Math.max(.1,Math.min(.72,.26+pitch));desired=new B.Vector3(t.x-dir.x*radius*Math.cos(elev),t.y+radius*Math.sin(elev),t.z-dir.z*radius*Math.cos(elev));}
+camera.position=B.Vector3.Lerp(camera.position,desired,Math.min(1,dt*8));camera.setTarget(mode==='detail'?new B.Vector3(HOME_X,3,-5):t);
+if(settings.showMonitor&&(frame++%9===0)){$('debug').textContent=`Gamepad: ${padInfo}\nMOVE L ${input.moveX.toFixed(2)}, ${input.moveY.toFixed(2)}\nLOOK R ${input.lookX.toFixed(2)}, ${input.lookY.toFixed(2)}\nMoving + looking together: ${Math.abs(input.moveX)+Math.abs(input.moveY)>.18 && Math.abs(input.lookX)+Math.abs(input.lookY)>.18?'YES':'—'}`}
+seconds+=dt;if(seconds>.6){lastFPS=Math.round(engine.getFps());$('fps').textContent=lastFPS+' fps';seconds=0}scene.render();});
+addEventListener('resize',()=>engine.resize());window.graphicsLabDebug={getStatus:()=>({model:modelKey,orientation:measuredOrientation,meshes:scene.meshes.length,characterLoaded:animationGroups.length>0,quality,position:actor.position.asArray(),fps:Math.round(engine.getFps()),camera:camera.position.asArray()}),getInput:()=>({...input})};
+})();
+</script></body></html>
